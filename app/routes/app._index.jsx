@@ -6,11 +6,9 @@ import {
   Text,
   Card,
   BlockStack,
-  Navigation,
   Button,
   Banner,
 } from "@shopify/polaris";
-import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { json } from "@remix-run/node";
 import CountrySelector from "../components/CountrySelector";
@@ -107,32 +105,7 @@ export default function Index() {
   }, []);
 
   return (
-    <Page
-      title="Country Restrictions Dashboard"
-      navigation={
-        <Navigation location="/">
-          <Navigation.Section
-            items={[
-              {
-                label: "Dashboard",
-                url: "/app",
-                selected: true,
-              },
-              {
-                label: "FAQ",
-                url: "/faq",
-                selected: false,
-              },
-              {
-                label: "Privacy Policy",
-                url: "/privacy-policy",
-                selected: false,
-              },
-            ]}
-          />
-        </Navigation>
-      }
-    >
+    <Page title="Country Restrictions Dashboard">
       <BlockStack gap="500">
         <Layout>
           <Layout.Section>
@@ -142,34 +115,45 @@ export default function Index() {
                   Welcome to your Country Restrictions Dashboard
                 </Text>
                 <Text as="p" variant="bodyMd">
-                  Use this dashboard to manage which countries can access your store.
+                  Use this dashboard to manage which countries can access your store. Select countries below and then embed the blocker in your theme.
                 </Text>
               </BlockStack>
             </Card>
           </Layout.Section>
           <Layout.Section>
-            <CountrySelector
-              selectedCountries={selectedCountries}
-              onChange={handleCountryChange}
-            />
+            <Card>
+              <BlockStack gap="400">
+                <Text as="h2" variant="headingMd">
+                  Country Selection
+                </Text>
+                <CountrySelector
+                  selectedCountries={selectedCountries}
+                  onChange={handleCountryChange}
+                />
+              </BlockStack>
+            </Card>
             {showEmbedInfo && (
-              <Banner status="info">
+              <Card>
                 <BlockStack gap="300">
-                  <Text as="p" variant="bodyMd">
-                    To embed the country blocker in your theme:
+                  <Text as="h2" variant="headingMd">
+                    Theme Integration
                   </Text>
-                  <Button onClick={handleEmbedClick}>
-                    Open Theme Editor
-                  </Button>
-                  <Text as="p" variant="bodySm" color="subdued">
-                    This will open your theme editor where you can add the country blocker block to your store's sections.
-                  </Text>
+                  <Banner status="info">
+                    <BlockStack gap="300">
+                      <Text as="p" variant="bodyMd">
+                        Now that you've selected your countries, you can add the country blocker to your theme:
+                      </Text>
+                      <Button onClick={handleEmbedClick} primary>
+                        Open Theme Editor
+                      </Button>
+                      <Text as="p" variant="bodySm" color="subdued">
+                        This will open your theme editor where you can add the country blocker block to your store's sections.
+                      </Text>
+                    </BlockStack>
+                  </Banner>
                 </BlockStack>
-              </Banner>
+              </Card>
             )}
-          </Layout.Section>
-          <Layout.Section>
-           
           </Layout.Section>
         </Layout>
       </BlockStack>
