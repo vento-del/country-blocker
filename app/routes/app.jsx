@@ -23,6 +23,8 @@ export default function App() {
           Home
         </Link>
         <Link to="/app/additional">Additional page</Link>
+        <Link to="/app/faq">FAQ</Link>
+        <Link to="/app/privacy-policy">Privacy Policy</Link>
       </NavMenu>
       <Outlet />
     </AppProvider>
