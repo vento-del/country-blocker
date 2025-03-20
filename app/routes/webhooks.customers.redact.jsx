@@ -1,13 +1,13 @@
 import { authenticate } from "../shopify.server";
 
 export const action = async ({ request }) => {
-  const { topic, shop, payload } = await authenticate.webhook(request);
-
-  if (!topic) {
-    return new Response(null, { status: 401 });
-  }
-
   try {
+    const { topic, shop, payload } = await authenticate.webhook(request);
+
+    if (!topic) {
+      return new Response(null, { status: 401 });
+    }
+
     // Log the deletion request
     console.log("Received customer deletion request:", {
       shop: shop,
@@ -22,6 +22,7 @@ export const action = async ({ request }) => {
     return new Response(null, { status: 200 });
   } catch (error) {
     console.error("Error processing customer deletion request:", error);
-    return new Response(null, { status: 500 });
+    // Return 401 for any authentication/validation errors
+    return new Response(null, { status: 401 });
   }
 }; 
