@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, Link } from "@remix-run/react";
 import {
   Page,
   Layout,
   Text,
   Card,
   BlockStack,
+  Button,
 } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
@@ -101,6 +102,14 @@ export default function Index() {
                 <Text as="p" variant="bodyMd">
                   Use this dashboard to manage which countries can access your store.
                 </Text>
+                <BlockStack gap="300">
+                  <Button as={Link} to="/faq">
+                    View FAQ
+                  </Button>
+                  <Button as={Link} to="/privacy-policy">
+                    Privacy Policy
+                  </Button>
+                </BlockStack>
               </BlockStack>
             </Card>
           </Layout.Section>
