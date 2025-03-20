@@ -6,7 +6,6 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
 
 export default function App() {
@@ -19,9 +18,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <AppProvider i18n={{}}>
-          <Outlet />
-        </AppProvider>
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
