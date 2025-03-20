@@ -1,8 +1,22 @@
-import { Page, Layout, Card, Text, BlockStack } from "@shopify/polaris";
+import { Page, Layout, Card, Text, BlockStack, Button } from "@shopify/polaris";
+import { Link } from "@remix-run/react";
+import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
+
+export const loader = async ({ request }) => {
+  await authenticate.admin(request);
+  return json({});
+};
 
 export default function FAQ() {
   return (
-    <Page title="Frequently Asked Questions">
+    <Page
+      title="Frequently Asked Questions"
+      backAction={{
+        content: "Back to Dashboard",
+        url: "/app",
+      }}
+    >
       <Layout>
         <Layout.Section>
           <Card>

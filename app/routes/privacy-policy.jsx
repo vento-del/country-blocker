@@ -1,8 +1,21 @@
 import { Page, Layout, Card, Text, BlockStack } from "@shopify/polaris";
+import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
+
+export const loader = async ({ request }) => {
+  await authenticate.admin(request);
+  return json({});
+};
 
 export default function PrivacyPolicy() {
   return (
-    <Page title="Privacy Policy">
+    <Page
+      title="Privacy Policy"
+      backAction={{
+        content: "Back to Dashboard",
+        url: "/app",
+      }}
+    >
       <Layout>
         <Layout.Section>
           <Card>
