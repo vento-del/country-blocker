@@ -16,6 +16,7 @@ export default function CountrySelector() {
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedValue, setSelectedValue] = useState("");
   const fetcher = useFetcher();
 
   const countries = [
@@ -48,31 +49,27 @@ export default function CountrySelector() {
   }, [fetcher.data]);
 
   const handleCountryChange = (value) => {
-    setSelectedCountries(prev => {
-      const newSelection = prev.includes(value) 
-        ? prev.filter(v => v !== value)
-        : [...prev, value];
+    setSelectedValue(value);
+    if (value && !selectedCountries.includes(value)) {
+      const newSelection = [...selectedCountries, value];
+      setSelectedCountries(newSelection);
       
       // Save to metafield
       const formData = new FormData();
       formData.append("countries", JSON.stringify(newSelection));
       fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
-      
-      return newSelection;
-    });
+    }
+    setSelectedValue("");
   };
 
   const removeCountry = (valueToRemove) => {
-    setSelectedCountries(prev => {
-      const newSelection = prev.filter(value => value !== valueToRemove);
-      
-      // Save to metafield
-      const formData = new FormData();
-      formData.append("countries", JSON.stringify(newSelection));
-      fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
-      
-      return newSelection;
-    });
+    const newSelection = selectedCountries.filter(value => value !== valueToRemove);
+    setSelectedCountries(newSelection);
+    
+    // Save to metafield
+    const formData = new FormData();
+    formData.append("countries", JSON.stringify(newSelection));
+    fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
   };
 
   const handleClearAll = () => {
@@ -104,13 +101,12 @@ export default function CountrySelector() {
         )}
         
         <Select
-          label="Select countries"
+          label="Select a country"
           options={countries}
           onChange={handleCountryChange}
-          value={selectedCountries}
-          multiple
-          placeholder="Choose countries..."
-          helpText="Hold Ctrl (Windows) or Command (Mac) to select multiple countries"
+          value={selectedValue}
+          placeholder="Choose a country..."
+          helpText="Select one country at a time"
         />
         
         <InlineStack gap="300" wrap={false}>
