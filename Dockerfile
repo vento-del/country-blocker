@@ -23,8 +23,8 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
+# Generate Prisma Client and deploy migrations
+RUN npx prisma generate && npx prisma migrate deploy
 
 # Build the application
 RUN npm run build
