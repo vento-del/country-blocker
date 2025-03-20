@@ -6,6 +6,14 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
+# Install curl and other dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Shopify CLI
+RUN npm install -g @shopify/cli @shopify/cli-hydrogen
+
 # Copy package files
 COPY package*.json ./
 
@@ -21,5 +29,5 @@ RUN npm run build
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "dev"] 
+# Start the application in production mode
+CMD ["npm", "start"] 
