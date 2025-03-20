@@ -39,16 +39,20 @@ export default function CountrySelector() {
 
   useEffect(() => {
     if (fetcher.data) {
+      console.log("Fetcher data received:", fetcher.data);
       if (fetcher.data.error) {
         setError(fetcher.data.error);
+        console.error("Error from API:", fetcher.data.error);
       } else if (fetcher.data.allowedCountries) {
         setSelectedCountries(fetcher.data.allowedCountries);
+        console.log("Countries loaded:", fetcher.data.allowedCountries);
       }
       setLoading(false);
     }
   }, [fetcher.data]);
 
   const handleCountryChange = (value) => {
+    console.log("Country selected:", value);
     setSelectedValue(value);
     if (value && !selectedCountries.includes(value)) {
       const newSelection = [...selectedCountries, value];
@@ -63,6 +67,7 @@ export default function CountrySelector() {
   };
 
   const removeCountry = (valueToRemove) => {
+    console.log("Removing country:", valueToRemove);
     const newSelection = selectedCountries.filter(value => value !== valueToRemove);
     setSelectedCountries(newSelection);
     
@@ -73,6 +78,7 @@ export default function CountrySelector() {
   };
 
   const handleClearAll = () => {
+    console.log("Clearing all countries");
     setSelectedCountries([]);
     const formData = new FormData();
     formData.append("countries", JSON.stringify([]));
@@ -84,6 +90,7 @@ export default function CountrySelector() {
       <Card>
         <BlockStack gap="400" align="center">
           <Spinner size="large" />
+          <Text as="p" variant="bodyMd">Loading country settings...</Text>
         </BlockStack>
       </Card>
     );
@@ -96,7 +103,10 @@ export default function CountrySelector() {
         
         {error && (
           <Banner status="critical">
-            {error}
+            <p>Error: {error}</p>
+            {fetcher.data?.details && (
+              <p>Details: {JSON.stringify(fetcher.data.details)}</p>
+            )}
           </Banner>
         )}
         
