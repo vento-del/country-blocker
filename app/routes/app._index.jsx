@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -7,11 +7,14 @@ import {
   Card,
   BlockStack,
   Navigation,
+  Button,
+  Banner,
 } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { json } from "@remix-run/node";
 import CountrySelector from "../components/CountrySelector";
+import { useState, useCallback } from "react";
 
 export const loader = async ({ request }) => {
   await authenticate.admin(request);
@@ -88,6 +91,20 @@ export const action = async ({ request }) => {
 
 export default function Index() {
   const data = useLoaderData();
+  const submit = useSubmit();
+  const [selectedCountries, setSelectedCountries] = useState([]);
+  const [showEmbedInfo, setShowEmbedInfo] = useState(false);
+
+  const handleCountryChange = useCallback((countries) => {
+    setSelectedCountries(countries);
+    setShowEmbedInfo(true);
+  }, []);
+
+  const handleEmbedClick = useCallback(() => {
+    const shopName = window.location.hostname.split('.')[0];
+    const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
+    window.open(embedUrl, '_blank');
+  }, []);
 
   return (
     <Page
@@ -131,7 +148,28 @@ export default function Index() {
             </Card>
           </Layout.Section>
           <Layout.Section>
-            <CountrySelector />
+            <CountrySelector
+              selectedCountries={selectedCountries}
+              onChange={handleCountryChange}
+            />
+            {showEmbedInfo && (
+              <Banner status="info">
+                <BlockStack gap="300">
+                  <Text as="p" variant="bodyMd">
+                    To embed the country blocker in your theme:
+                  </Text>
+                  <Button onClick={handleEmbedClick}>
+                    Open Theme Editor
+                  </Button>
+                  <Text as="p" variant="bodySm" color="subdued">
+                    This will open your theme editor where you can add the country blocker block to your store's sections.
+                  </Text>
+                </BlockStack>
+              </Banner>
+            )}
+          </Layout.Section>
+          <Layout.Section>
+           
           </Layout.Section>
         </Layout>
       </BlockStack>

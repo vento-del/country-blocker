@@ -95,7 +95,7 @@ export default function PrivacyPolicy() {
               <Text as="p" variant="bodyMd">
                 If you have any questions about this Privacy Policy or our data practices, please contact us at:
                 <br />
-                Email: privacy@example.com
+                Email: ventosupprt@gmail.com
               </Text>
 
               <Text as="h2" variant="headingMd">
