@@ -81,7 +81,7 @@ export default function FAQ() {
                   How can I get help if I have issues?
                 </Text>
                 <Text as="p" variant="bodyMd">
-                  If you encounter any issues or have questions, please contact our support team through the Shopify Partner dashboard or email us at support@example.com.
+                  If you encounter any issues or have questions, please contact our support team through the Shopify Partner dashboard or email us at ventosupprt@gmail.com.
                 </Text>
               </BlockStack>
             </BlockStack>
