@@ -131,11 +131,6 @@ export default function Index() {
                   selectedCountries={selectedCountries}
                   onChange={handleCountryChange}
                 />
-                {selectedCountries.length > 0 && (
-                  <Text as="p" variant="bodySm" color="subdued">
-                    {selectedCountries.length} countries selected
-                  </Text>
-                )}
               </BlockStack>
             </Card>
             
