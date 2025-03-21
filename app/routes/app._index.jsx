@@ -15,10 +15,13 @@ import CountrySelector from "../components/CountrySelector";
 import { useState, useCallback } from "react";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
-
+  const { admin, session } = await authenticate.admin(request);
+  
+  // Get shop data from session
+  const shop = session.shop;
+  
   return json({
-    // Add any data you want to pass to the component
+    shop
   });
 };
 
@@ -88,53 +91,39 @@ export const action = async ({ request }) => {
 };
 
 export default function Index() {
-  const data = useLoaderData();
+  const { shop } = useLoaderData();
   const submit = useSubmit();
   const [selectedCountries, setSelectedCountries] = useState([]);
 
   const handleCountryChange = useCallback((countries) => {
-    console.log("Countries selected:", countries); // Debug log
+    console.log("Countries selected:", countries);
     setSelectedCountries(countries);
   }, []);
 
   const handleEmbedClick = useCallback(() => {
-    // Get the current URL
-    const currentUrl = window.location.href;
-    console.log("Current URL:", currentUrl); // Debug log
+    try {
+      // Use the shop from loader data
+      if (!shop) {
+        console.error('Shop information not available');
+        return;
+      }
 
-    // Try to get shop name from the current URL
-    const shopMatch = currentUrl.match(/https:\/\/([^.]+)\.myshopify\.com/);
-    console.log("Shop match:", shopMatch); // Debug log
+      // Construct the URL using the shop from the session
+      const embedUrl = `https://${shop}/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
+      console.log('Opening URL:', embedUrl);
 
-    if (shopMatch) {
-      const shopName = shopMatch[1];
-      const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
-      console.log("Opening URL:", embedUrl); // Debug log
+      // Open in new tab with proper attributes
+      const newWindow = window.open(embedUrl, '_blank', 'noopener,noreferrer');
       
-      // Try to open the URL
-      try {
-        window.open(embedUrl, '_blank', 'noopener,noreferrer');
-      } catch (error) {
-        console.error("Error opening URL:", error);
-        // Fallback: try to redirect in the same window
+      if (newWindow === null) {
+        // If popup was blocked, try redirecting in the same window
+        console.log('Popup blocked, trying redirect');
         window.location.href = embedUrl;
       }
-    } else {
-      // If we can't get the shop name from the current URL, try to get it from the hostname
-      const hostname = window.location.hostname;
-      console.log("Hostname:", hostname); // Debug log
-      
-      const hostnameMatch = hostname.match(/([^.]+)\.myshopify\.com/);
-      if (hostnameMatch) {
-        const shopName = hostnameMatch[1];
-        const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
-        console.log("Opening URL (from hostname):", embedUrl); // Debug log
-        window.open(embedUrl, '_blank', 'noopener,noreferrer');
-      } else {
-        console.error('Could not determine shop name from URL or hostname');
-      }
+    } catch (error) {
+      console.error('Error opening theme editor:', error);
     }
-  }, []);
+  }, [shop]);
 
   return (
     <Page title="Country Restrictions Dashboard">
