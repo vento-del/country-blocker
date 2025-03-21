@@ -138,7 +138,7 @@ export default function Index() {
                 )}
               </BlockStack>
             </Card>
-            {selectedCountries.length > 0 && (
+            
               <Card>
                 <BlockStack gap="300">
                   <Text as="h2" variant="headingMd">
@@ -159,7 +159,7 @@ export default function Index() {
                   </Banner>
                 </BlockStack>
               </Card>
-            )}
+            
           </Layout.Section>
         </Layout>
       </BlockStack>
