@@ -144,28 +144,26 @@ export default function Index() {
                 )}
               </BlockStack>
             </Card>
-            {selectedCountries.length > 0 && (
-              <Card>
-                <BlockStack gap="300">
-                  <Text as="h2" variant="headingMd">
-                    Theme Integration
-                  </Text>
-                  <Banner status="info">
-                    <BlockStack gap="300">
-                      <Text as="p" variant="bodyMd">
-                        Now that you've selected your countries, you can add the country blocker to your theme:
-                      </Text>
-                      <Button onClick={handleEmbedClick} primary>
-                        Open Theme Editor
-                      </Button>
-                      <Text as="p" variant="bodySm" color="subdued">
-                        This will open your theme editor where you can add the country blocker block to your store's sections.
-                      </Text>
-                    </BlockStack>
-                  </Banner>
-                </BlockStack>
-              </Card>
-            )}
+            <Card>
+              <BlockStack gap="300">
+                <Text as="h2" variant="headingMd">
+                  Theme Integration
+                </Text>
+                <Banner status="info">
+                  <BlockStack gap="300">
+                    <Text as="p" variant="bodyMd">
+                      Add the country blocker to your theme:
+                    </Text>
+                    <Button onClick={handleEmbedClick} primary>
+                      Open Theme Editor
+                    </Button>
+                    <Text as="p" variant="bodySm" color="subdued">
+                      This will open your theme editor where you can add the country blocker block to your store's sections.
+                    </Text>
+                  </BlockStack>
+                </Banner>
+              </BlockStack>
+            </Card>
           </Layout.Section>
         </Layout>
       </BlockStack>
