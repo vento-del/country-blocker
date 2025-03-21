@@ -112,14 +112,8 @@ export default function Index() {
       const embedUrl = `https://${shop}/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
       console.log('Opening URL:', embedUrl);
 
-      // Open in new tab with proper attributes
-      const newWindow = window.open(embedUrl, '_blank', 'noopener,noreferrer');
-      
-      if (newWindow === null) {
-        // If popup was blocked, try redirecting in the same window
-        console.log('Popup blocked, trying redirect');
-        window.location.href = embedUrl;
-      }
+      // Open directly in a new tab
+      window.location.assign(embedUrl);
     } catch (error) {
       console.error('Error opening theme editor:', error);
     }
