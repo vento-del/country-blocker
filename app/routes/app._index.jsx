@@ -100,9 +100,17 @@ export default function Index() {
   }, []);
 
   const handleEmbedClick = useCallback(() => {
-    const shopName = window.location.hostname.split('.')[0];
-    const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
-    window.open(embedUrl, '_blank');
+    // Get the current URL
+    const currentUrl = window.location.href;
+    // Extract shop name from the URL
+    const shopMatch = currentUrl.match(/https:\/\/([^.]+)\.myshopify\.com/);
+    if (shopMatch) {
+      const shopName = shopMatch[1];
+      const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
+      window.open(embedUrl, '_blank');
+    } else {
+      console.error('Could not determine shop name from URL');
+    }
   }, []);
 
   return (
@@ -131,9 +139,14 @@ export default function Index() {
                   selectedCountries={selectedCountries}
                   onChange={handleCountryChange}
                 />
+                {selectedCountries.length > 0 && (
+                  <Text as="p" variant="bodySm" color="subdued">
+                    {selectedCountries.length} countries selected
+                  </Text>
+                )}
               </BlockStack>
             </Card>
-            
+            {selectedCountries.length > 0 && (
               <Card>
                 <BlockStack gap="300">
                   <Text as="h2" variant="headingMd">
@@ -154,7 +167,7 @@ export default function Index() {
                   </Banner>
                 </BlockStack>
               </Card>
-            
+            )}
           </Layout.Section>
         </Layout>
       </BlockStack>
