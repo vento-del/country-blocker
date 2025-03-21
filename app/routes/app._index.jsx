@@ -100,14 +100,39 @@ export default function Index() {
   const handleEmbedClick = useCallback(() => {
     // Get the current URL
     const currentUrl = window.location.href;
-    // Extract shop name from the URL
+    console.log("Current URL:", currentUrl); // Debug log
+
+    // Try to get shop name from the current URL
     const shopMatch = currentUrl.match(/https:\/\/([^.]+)\.myshopify\.com/);
+    console.log("Shop match:", shopMatch); // Debug log
+
     if (shopMatch) {
       const shopName = shopMatch[1];
       const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
-      window.open(embedUrl, '_blank');
+      console.log("Opening URL:", embedUrl); // Debug log
+      
+      // Try to open the URL
+      try {
+        window.open(embedUrl, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.error("Error opening URL:", error);
+        // Fallback: try to redirect in the same window
+        window.location.href = embedUrl;
+      }
     } else {
-      console.error('Could not determine shop name from URL');
+      // If we can't get the shop name from the current URL, try to get it from the hostname
+      const hostname = window.location.hostname;
+      console.log("Hostname:", hostname); // Debug log
+      
+      const hostnameMatch = hostname.match(/([^.]+)\.myshopify\.com/);
+      if (hostnameMatch) {
+        const shopName = hostnameMatch[1];
+        const embedUrl = `https://${shopName}.myshopify.com/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
+        console.log("Opening URL (from hostname):", embedUrl); // Debug log
+        window.open(embedUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        console.error('Could not determine shop name from URL or hostname');
+      }
     }
   }, []);
 
