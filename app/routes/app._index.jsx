@@ -108,12 +108,15 @@ export default function Index() {
         return;
       }
 
-      // Construct the URL using the shop from the session
-      const embedUrl = `https://${shop}/admin/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
+      // Extract the shop name without .myshopify.com
+      const shopName = shop.replace('.myshopify.com', '');
+      
+      // Construct the URL using admin.shopify.com format
+      const embedUrl = `https://admin.shopify.com/store/${shopName}/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/country_blocker`;
       console.log('Opening URL:', embedUrl);
 
-      // Open directly in a new tab
-      window.location.assign(embedUrl);
+      // Open in a new tab
+      window.open(embedUrl, '_blank');
     } catch (error) {
       console.error('Error opening theme editor:', error);
     }
