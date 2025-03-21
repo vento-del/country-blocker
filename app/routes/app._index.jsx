@@ -94,8 +94,9 @@ export default function Index() {
   const [showEmbedInfo, setShowEmbedInfo] = useState(false);
 
   const handleCountryChange = useCallback((countries) => {
+    console.log("Countries selected:", countries); // Debug log
     setSelectedCountries(countries);
-    setShowEmbedInfo(true);
+    setShowEmbedInfo(countries.length > 0); // Show embed info if any countries are selected
   }, []);
 
   const handleEmbedClick = useCallback(() => {
@@ -130,9 +131,14 @@ export default function Index() {
                   selectedCountries={selectedCountries}
                   onChange={handleCountryChange}
                 />
+                {selectedCountries.length > 0 && (
+                  <Text as="p" variant="bodySm" color="subdued">
+                    {selectedCountries.length} countries selected
+                  </Text>
+                )}
               </BlockStack>
             </Card>
-            {showEmbedInfo && (
+            {selectedCountries.length > 0 && (
               <Card>
                 <BlockStack gap="300">
                   <Text as="h2" variant="headingMd">
