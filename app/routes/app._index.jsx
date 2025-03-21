@@ -91,12 +91,10 @@ export default function Index() {
   const data = useLoaderData();
   const submit = useSubmit();
   const [selectedCountries, setSelectedCountries] = useState([]);
-  const [showEmbedInfo, setShowEmbedInfo] = useState(false);
 
   const handleCountryChange = useCallback((countries) => {
     console.log("Countries selected:", countries); // Debug log
     setSelectedCountries(countries);
-    setShowEmbedInfo(countries.length > 0); // Show embed info if any countries are selected
   }, []);
 
   const handleEmbedClick = useCallback(() => {
