@@ -5,19 +5,23 @@ EXPOSE 3000
 
 WORKDIR /app
 
-ENV NODE_ENV=production
+# Set NODE_ENV to development during build to install dev dependencies
+ENV NODE_ENV=development
 
 COPY package.json package-lock.json* ./
 
 # Install all dependencies including dev dependencies for build
-RUN npm ci && npm cache clean --force
+RUN npm install && npm cache clean --force
 
 COPY . .
 
 # Use Remix build instead of Shopify CLI
 RUN npm run build:remix
 
+# Now set NODE_ENV to production
+ENV NODE_ENV=production
+
 # Remove dev dependencies after build to keep image size smaller
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm prune --omit=dev && npm cache clean --force
 
 CMD ["npm", "run", "docker-start"]
