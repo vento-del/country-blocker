@@ -16,7 +16,7 @@ RUN npm install && npm cache clean --force
 
 COPY . .
 
-RUN npm run build
+RUN npm run build:remix
 
 # Now set NODE_ENV to production
 ENV NODE_ENV=production
