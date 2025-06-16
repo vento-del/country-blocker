@@ -1,0 +1,26 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+name = "Rabbi Country Blocker"
+client_id = "a1ab97a46b1da2e22ae82de7c621e32a"
+application_url = "https://shoes-netherlands-neighbors-hughes.trycloudflare.com"
+embedded = true
+handle = "insta-18"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+dev_store_url = "teststorecvd.myshopify.com"
+
+[webhooks]
+api_version = "2024-01"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+# Use read_products as a default for the app scope
+scopes = "write_products,read_products"
+
+[auth]
+redirect_urls = ["https://shoes-netherlands-neighbors-hughes.trycloudflare.com/auth/callback", "https://shoes-netherlands-neighbors-hughes.trycloudflare.com/auth/shopify/callback", "https://shoes-netherlands-neighbors-hughes.trycloudflare.com/api/auth/callback"]
+
+[pos]
+embedded = false
+

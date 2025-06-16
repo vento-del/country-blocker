@@ -22,6 +22,7 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
+        <Link to="/app/shortcuts">Disable Keyboard Shortcuts</Link>
         <Link to="/app/faq">FAQ</Link>
         <Link to="/app/privacy-policy">Privacy Policy</Link>
       </NavMenu>

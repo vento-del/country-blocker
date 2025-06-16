@@ -1,36 +1,21 @@
-FROM node:20-slim
+FROM node:18-alpine
+RUN apk add --no-cache openssl
+
+EXPOSE 3000
 
 WORKDIR /app
 
-# Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
 
-# Install curl and other dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+COPY package.json package-lock.json* ./
 
-# Install Shopify CLI
-RUN npm install -g @shopify/cli @shopify/cli-hydrogen
+RUN npm ci --omit=dev && npm cache clean --force
+# Remove CLI packages since we don't need them in production by default.
+# Remove this line if you want to run CLI commands in your container.
+RUN npm remove @shopify/cli
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application
 COPY . .
 
-# Generate Prisma Client and deploy migrations
-RUN npx prisma generate && npx prisma migrate deploy
-
-# Build the application
 RUN npm run build
 
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Start the application in production mode
-CMD ["npm", "start"] 
+CMD ["npm", "run", "docker-start"]

@@ -1,0 +1,64 @@
+
+
+<div id="keyboard-shortcut" data-shortcuts='{{ shop.metafields.shortcuts.enabled }}'></div>
+
+<script>
+  // Check if keyboard shortcuts should be disabled
+  document.addEventListener('DOMContentLoaded', function() {
+    const shortcutElement = document.getElementById('keyboard-shortcut');
+    const shortcutsEnabled = shortcutElement.getAttribute('data-shortcuts') === 'true';
+    
+    if (shortcutsEnabled) {
+      console.log('Keyboard shortcuts blocking is enabled');
+      
+      document.addEventListener('keydown', function (e) {
+        const key = e.key.toLowerCase();
+        
+        // Block Ctrl/Meta + [C, X, A, S, U, P, R]
+        if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 's', 'u', 'p', 'r'].includes(key)) {
+          e.preventDefault();
+          console.log(`Ctrl+${key.toUpperCase()} is disabled on this page.`);
+        }
+        
+        // Block F12 and F5
+        if (e.key === 'F12' || e.key === 'F5') {
+          e.preventDefault();
+          console.log(`${e.key} is disabled on this page.`);
+        }
+        
+        // Block Ctrl+Shift+I / J
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j'].includes(key)) {
+          e.preventDefault();
+          console.log(`Ctrl+Shift+${key.toUpperCase()} is disabled on this page.`);
+        }
+        
+        // Block Shift+F10 (context menu)
+        if (e.shiftKey && e.key === 'F10') {
+          e.preventDefault();
+          console.log('Shift+F10 (context menu) is disabled.');
+        }
+      });
+      
+      // Disable right-click
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        console.log('Right-click is disabled on this page.');
+      });
+      
+    } else {
+      console.log('Keyboard shortcuts blocking is disabled');
+    }
+  });
+</script>
+   
+{% schema %}
+    {
+      "name": "Disable Keyboard Shortcuts",
+      "target": "body",
+      "class": "Keyboard_shortcuts",
+    
+      "settings": [
+       
+      ]
+    }
+    {% endschema %}

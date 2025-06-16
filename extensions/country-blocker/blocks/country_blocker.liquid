@@ -1,0 +1,49 @@
+<link rel="stylesheet" href="{{ 'Country_bloocker.css' | asset_url }}">
+<script src="{{ 'Country_blocker.js' | asset_url }}" async></script>
+{% comment %} <input
+  type="hidden"
+  id="country_blocker"
+  name="country_blocker"
+  value="{{ shop.metafields.countryselector.selected-country }}"
+> {% endcomment %}
+<!-- Hidden element to store country codes -->
+<div id="blocked-countries" data-countries='{{ shop.metafields.countryselector.selected-country }}'></div>
+<div id="blocker-div" style="display: none; background-color: {{ block.settings.background_color }};">
+    <div id="blocker-content" style="background-color: {{ block.settings.text_block_color }};">
+      <h1 style="color: {{ block.settings.text_color }};">{{ block.settings.blocker_message }}</h1>
+    </div>
+  </div>    
+{% schema %}
+    {
+      "name": "Country Blocker",
+      "target": "body",
+      "class": "floating_popup",
+    
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "blocker_message",
+          "label": "Blocker Message",
+          "default": "We're sorry, but our store currently does not ship or operate in your country. Please check back in the future"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Message Text Color",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "text_block_color",
+          "label": "Message Container color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Popup Background Color",
+          "default": "#ffffff"
+        }
+      ]
+    }
+    {% endschema %}
