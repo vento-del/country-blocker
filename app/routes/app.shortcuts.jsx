@@ -9,13 +9,14 @@ import {
   BlockStack, 
   Banner,
   InlineStack,
-  SettingToggle
+  SettingToggle,
+  Button
 } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
   try {
-    const { admin } = await authenticate.admin(request);
+    const { admin, session } = await authenticate.admin(request);
     
     // Get the shop's metafield for shortcuts toggle state
     const response = await admin.graphql(
@@ -23,6 +24,7 @@ export const loader = async ({ request }) => {
         query {
           shop {
             id
+            myshopifyDomain
             metafield(namespace: "shortcuts", key: "enabled") {
               value
             }
@@ -39,6 +41,7 @@ export const loader = async ({ request }) => {
     }
 
     const metafield = responseJson.data?.shop?.metafield;
+    const shopDomain = responseJson.data?.shop?.myshopifyDomain;
     
     // Default to false if no metafield exists
     let isEnabled = false;
@@ -51,7 +54,7 @@ export const loader = async ({ request }) => {
       }
     }
 
-    return json({ isEnabled });
+    return json({ isEnabled, shopDomain });
   } catch (error) {
     console.error("Error in loader:", error);
     return json({ 
@@ -152,7 +155,7 @@ export const action = async ({ request }) => {
 };
 
 export default function Shortcuts() {
-  const { isEnabled, error } = useLoaderData();
+  const { isEnabled, error, shopDomain } = useLoaderData();
   const [enabled, setEnabled] = useState(isEnabled);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState({ success: false, error: null });
@@ -186,6 +189,29 @@ export default function Shortcuts() {
       }, 3000);
     }, 500);
   }, [enabled, submit]);
+
+
+  const handleEmbedShortcutClick = useCallback(() => {
+    try {
+      // Use the shop from loader data
+      if (!shopDomain) {
+        console.error('Shop information not available');
+        return;
+      }
+
+      // Extract the shop name without .myshopify.com
+      const shopName = shopDomain.replace('.myshopify.com', '');
+      
+      // Construct the URL using admin.shopify.com format
+      const embedUrl = `https://admin.shopify.com/store/${shopName}/themes/current/editor?context=apps&template=index&activateAppId=d7c3a32f-9572-4caf-aadd-ab0a618f3c30/disable_shortcuts`;
+      console.log('Opening URL:', embedUrl);
+
+      // Open in a new tab
+      window.open(embedUrl, '_blank');
+    } catch (error) {
+      console.error('Error opening theme editor:', error);
+    }
+  }, [shopDomain]);
 
   return (
     <Page
@@ -296,6 +322,26 @@ export default function Shortcuts() {
               )}
             </BlockStack>
           </Card>
+          <Card>
+              <BlockStack gap="300">
+                <Text as="h2" variant="headingMd">
+                  Theme Integration
+                </Text>
+                <Banner status="info">
+                  <BlockStack gap="300">
+                    <Text as="p" variant="bodyMd">
+                      Add the country blocker to your theme:
+                    </Text>
+                    <Button onClick={handleEmbedShortcutClick} primary>
+                      Open Theme Editor
+                    </Button>
+                    <Text as="p" variant="bodySm" color="subdued">
+                      This will open your theme editor where you can add the country blocker block to your store's sections.
+                    </Text>
+                  </BlockStack>
+                </Banner>
+              </BlockStack>
+            </Card>
         </Layout.Section>
       </Layout>
     </Page>
