@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "shopify app dev",
     "build": "shopify app build",
+    "build:remix": "remix vite:build",
     "deploy": "shopify app deploy",
     "generate": "shopify app generate",
+    "docker-start": "npm run start",
+    "start": "remix-serve build/server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -15,6 +18,7 @@
     "@remix-run/dev": "^2.16.8",
     "@remix-run/fs-routes": "^2.16.8",
     "@remix-run/node": "^2.16.8",
+    "@remix-run/serve": "^2.16.8",
     "@shopify/app-bridge-react": "^4.1.10",
     "@shopify/polaris": "^13.9.5",
     "@shopify/shopify-app-remix": "^3.8.3",
@@ -24,6 +28,7 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {
-    "prisma": "^6.9.0"
+    "prisma": "^6.9.0",
+    "@shopify/cli": "^3.73.0"
   }
 }
