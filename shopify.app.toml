@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 name = "Rabbi Country Blocker"
 client_id = "a1ab97a46b1da2e22ae82de7c621e32a"
-application_url = "https://shoes-netherlands-neighbors-hughes.trycloudflare.com"
+application_url = "https://cos-drill-missing-walker.trycloudflare.com"
 embedded = true
 handle = "insta-18"
 
@@ -19,7 +19,7 @@ api_version = "2024-01"
 scopes = "write_products,read_products"
 
 [auth]
-redirect_urls = ["https://shoes-netherlands-neighbors-hughes.trycloudflare.com/auth/callback", "https://shoes-netherlands-neighbors-hughes.trycloudflare.com/auth/shopify/callback", "https://shoes-netherlands-neighbors-hughes.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://cos-drill-missing-walker.trycloudflare.com/auth/callback", "https://cos-drill-missing-walker.trycloudflare.com/auth/shopify/callback", "https://cos-drill-missing-walker.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false
