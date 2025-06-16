@@ -16,12 +16,7 @@ RUN npm install && npm cache clean --force
 
 COPY . .
 
-RUN echo "=== Starting build process ===" && npm run build:remix
-
-# Debug: List what files were created
-RUN echo "=== Listing /app directory ===" && ls -la /app
-RUN echo "=== Checking build directory ===" && ls -la build/ || echo "No build directory found"
-RUN echo "=== Checking for nested directories ===" && find /app -name "*.js" -path "*/build/*" || echo "No build JS files found"
+RUN npm run build:remix
 
 # Now set NODE_ENV to production
 ENV NODE_ENV=production
