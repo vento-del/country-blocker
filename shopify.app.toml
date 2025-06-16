@@ -1,0 +1,28 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a1ab97a46b1da2e22ae82de7c621e32a"
+name = "Rabbi Country Blocker"
+handle = "insta-18"
+application_url = "https://taiwan-poultry-vehicle-liberal.trycloudflare.com"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2024-01"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/compliance"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+
+[auth]
+redirect_urls = ["https://taiwan-poultry-vehicle-liberal.trycloudflare.com/auth/callback", "https://taiwan-poultry-vehicle-liberal.trycloudflare.com/auth/shopify/callback", "https://taiwan-poultry-vehicle-liberal.trycloudflare.com/api/auth/callback"]
+
+[pos]
+embedded = false
