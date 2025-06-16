@@ -18,9 +18,6 @@ COPY . .
 
 RUN npm run build:remix
 
-# Debug: Check what was actually built
-RUN echo "=== Build contents ===" && ls -la build/ && echo "=== Build subdirs ===" && find build/ -type f
-
 # Now set NODE_ENV to production
 ENV NODE_ENV=production
 
