@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "shopify app dev",
     "build": "shopify app build",
-    "build:remix": "vite build",
+    "build:remix": "remix build",
     "deploy": "shopify app deploy",
     "generate": "shopify app generate",
     "docker-start": "npm run start",

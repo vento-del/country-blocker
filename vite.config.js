@@ -53,7 +53,6 @@ export default defineConfig({
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],
-      serverBuildPath: "build/server/index.js",
       future: {
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
