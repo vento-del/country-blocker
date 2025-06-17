@@ -209,17 +209,23 @@ const countries = [
   { label: "Zimbabwe", value: "ZW" }
 ];
 
-export default function CountrySelector() {
-  const [selectedCountries, setSelectedCountries] = useState([]);
+export default function CountrySelector({ disabled, selectedCountries: initialSelectedCountries, onChange }) {
+  const [selectedCountries, setSelectedCountries] = useState(initialSelectedCountries || []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedValue, setSelectedValue] = useState("");
   const fetcher = useFetcher();
 
   useEffect(() => {
-    // Load saved countries when component mounts
-    fetcher.load("/api/metafields");
-  }, []);
+    // If initialSelectedCountries is provided, use it
+    if (initialSelectedCountries) {
+      setSelectedCountries(initialSelectedCountries);
+      setLoading(false);
+    } else {
+      // Otherwise load saved countries when component mounts
+      fetcher.load("/api/metafields");
+    }
+  }, [initialSelectedCountries]);
 
   useEffect(() => {
     if (fetcher.data) {
@@ -229,18 +235,28 @@ export default function CountrySelector() {
         console.error("Error from API:", fetcher.data.error);
       } else if (fetcher.data.allowedCountries) {
         setSelectedCountries(fetcher.data.allowedCountries);
+        if (onChange) {
+          onChange(fetcher.data.allowedCountries);
+        }
         console.log("Countries loaded:", fetcher.data.allowedCountries);
       }
       setLoading(false);
     }
-  }, [fetcher.data]);
+  }, [fetcher.data, onChange]);
 
   const handleCountryChange = (value) => {
+    if (disabled) return;
+    
     console.log("Country selected:", value);
     setSelectedValue(value);
     if (value && !selectedCountries.includes(value)) {
       const newSelection = [...selectedCountries, value];
       setSelectedCountries(newSelection);
+      
+      // Call onChange if provided
+      if (onChange) {
+        onChange(newSelection);
+      }
       
       // Save to metafield
       const formData = new FormData();
@@ -251,9 +267,16 @@ export default function CountrySelector() {
   };
 
   const removeCountry = (valueToRemove) => {
+    if (disabled) return;
+    
     console.log("Removing country:", valueToRemove);
     const newSelection = selectedCountries.filter(value => value !== valueToRemove);
     setSelectedCountries(newSelection);
+    
+    // Call onChange if provided
+    if (onChange) {
+      onChange(newSelection);
+    }
     
     // Save to metafield
     const formData = new FormData();
@@ -262,8 +285,16 @@ export default function CountrySelector() {
   };
 
   const handleClearAll = () => {
+    if (disabled) return;
+    
     console.log("Clearing all countries");
     setSelectedCountries([]);
+    
+    // Call onChange if provided
+    if (onChange) {
+      onChange([]);
+    }
+    
     const formData = new FormData();
     formData.append("countries", JSON.stringify([]));
     fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
@@ -281,55 +312,59 @@ export default function CountrySelector() {
   }
 
   return (
-    <Card>
-      <BlockStack gap="400">
-        <Text variant="headingMd" as="h2">Country Selection</Text>
-        
-        {error && (
-          <Banner status="critical">
-            <p>Error: {error}</p>
-            {fetcher.data?.details && (
-              <p>Details: {JSON.stringify(fetcher.data.details)}</p>
-            )}
-          </Banner>
-        )}
-        
-        <Select
-          label="Select a country"
-          options={countries}
-          onChange={handleCountryChange}
-          value={selectedValue}
-          placeholder="Choose a country..."
-          helpText="Select one country at a time"
-        />
-        
-        <InlineStack gap="300" wrap={false}>
-          <Button onClick={handleClearAll}>
-            Clear All
-          </Button>
-          {selectedCountries.length > 0 && (
-            <Text variant="bodySm" as="p" color="subdued">
-              {selectedCountries.length} {selectedCountries.length === 1 ? 'country' : 'countries'} selected
-            </Text>
+    <BlockStack gap="400">
+      {error && (
+        <Banner status="critical">
+          <p>Error: {error}</p>
+          {fetcher.data?.details && (
+            <p>Details: {JSON.stringify(fetcher.data.details)}</p>
           )}
-        </InlineStack>
-
+        </Banner>
+      )}
+      
+      <Select
+        label="Select a country"
+        options={countries}
+        onChange={handleCountryChange}
+        value={selectedValue}
+        placeholder="Choose a country..."
+        helpText="Select one country at a time"
+        disabled={disabled}
+      />
+      
+      <InlineStack gap="300" wrap={false}>
+        <Button 
+          onClick={handleClearAll}
+          disabled={disabled}
+        >
+          Clear All
+        </Button>
         {selectedCountries.length > 0 && (
-          <BlockStack gap="300">
-            <Text variant="headingSm" as="h3">Selected Countries:</Text>
-            <InlineStack gap="300" wrap>
-              {selectedCountries.map((value) => {
-                const country = countries.find(c => c.value === value);
-                return (
-                  <Tag key={value} onRemove={() => removeCountry(value)}>
-                    {country?.label}
-                  </Tag>
-                );
-              })}
-            </InlineStack>
-          </BlockStack>
+          <Text variant="bodySm" as="p" color="subdued">
+            {selectedCountries.length} {selectedCountries.length === 1 ? 'country' : 'countries'} selected
+          </Text>
         )}
-      </BlockStack>
-    </Card>
+      </InlineStack>
+
+      {selectedCountries.length > 0 && (
+        <BlockStack gap="300">
+          <Text variant="headingSm" as="h3">Selected Countries:</Text>
+          <InlineStack gap="300" wrap>
+            {selectedCountries.map((value) => {
+              const country = countries.find(c => c.value === value);
+              return (
+                <Tag 
+                  key={value} 
+                  onRemove={disabled ? undefined : () => removeCountry(value)}
+                  disabled={disabled}
+                >
+                  {country?.label}
+                </Tag>
+              );
+            })}
+          </InlineStack>
+        </BlockStack>
+      )}
+    </BlockStack>
   );
 } 

@@ -29,6 +29,13 @@ export const loader = async ({ request }) => {
               value
             }
           }
+          currentAppInstallation {
+            activeSubscriptions {
+              id
+              name
+              status
+            }
+          }
         }
       `
     );
@@ -42,6 +49,10 @@ export const loader = async ({ request }) => {
 
     const metafield = responseJson.data?.shop?.metafield;
     const shopDomain = responseJson.data?.shop?.myshopifyDomain;
+    const activeSubscriptions = responseJson.data?.currentAppInstallation?.activeSubscriptions || [];
+    
+    // Check if the shop has an active plan
+    const hasPlan = activeSubscriptions.length > 0;
     
     // Default to false if no metafield exists
     let isEnabled = false;
@@ -54,12 +65,13 @@ export const loader = async ({ request }) => {
       }
     }
 
-    return json({ isEnabled, shopDomain });
+    return json({ isEnabled, shopDomain, hasPlan });
   } catch (error) {
     console.error("Error in loader:", error);
     return json({ 
       error: "Failed to fetch Keyboard shortcuts settings", 
-      details: error.message 
+      details: error.message,
+      hasPlan: false
     }, { status: 500 });
   }
 };
@@ -155,7 +167,7 @@ export const action = async ({ request }) => {
 };
 
 export default function Shortcuts() {
-  const { isEnabled, error, shopDomain } = useLoaderData();
+  const { isEnabled, error, shopDomain, hasPlan } = useLoaderData();
   const [enabled, setEnabled] = useState(isEnabled);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState({ success: false, error: null });
@@ -244,42 +256,63 @@ export default function Shortcuts() {
           <Card>
             <BlockStack gap="400">
               
+              {!hasPlan && (
+                <Banner status="warning">
+                  <Text as="p" variant="bodyMd">
+                    You need to select a subscription plan to use this feature.
+                  </Text>
+                  <Button 
+                    onClick={() => {
+                      if (shopDomain) {
+                        const shopName = shopDomain.replace('.myshopify.com', '');
+                        const pricingUrl = `https://admin.shopify.com/store/${shopName}/charges/insta-18/pricing_plans`;
+                        window.open(pricingUrl, '_blank');
+                      }
+                    }}
+                    primary
+                    plain
+                  >
+                    Manage Subscription
+                  </Button>
+                </Banner>
+              )}
+              
               <Text as="p" variant="bodyMd">
               Enable this setting to prevent users from using keyboard shortcuts like Ctrl+C, Ctrl+X, Ctrl+U, and F12 on your website or specific pages.
-              
               </Text>
               
-              
-              
-              <SettingToggle
-                action={{
-                  content: enabled ? "Disable" : "Enable",
-                  onAction: handleToggle,
-                  loading: isSaving,
-                  ...(enabled && {
-                    variant: "primary",
-                    tone: "success"
-                  })
-                }}
-                enabled={enabled}
-              >
-                <Text variant="headingMd" as="h6">
-                  Disable Keyboard Shortcuts
-                </Text>
-                <Text variant="bodyMd" as="p">
-                  {enabled 
-                    ? "Keyboard shortcuts are currently disabled on your website." 
-                    : "Enable to disable keyboard shortcuts like Ctrl+C, Ctrl+U, F12 on your website."
-                  }
-                </Text>
-              </SettingToggle>
+              <div style={{ opacity: hasPlan ? 1 : 0.5 }}>
+                <SettingToggle
+                  action={{
+                    content: enabled ? "Disable" : "Enable",
+                    onAction: handleToggle,
+                    loading: isSaving,
+                    disabled: !hasPlan,
+                    ...(enabled && {
+                      variant: "primary",
+                      tone: "success"
+                    })
+                  }}
+                  enabled={enabled && hasPlan}
+                >
+                  <Text variant="headingMd" as="h6">
+                    Disable Keyboard Shortcuts
+                  </Text>
+                  <Text variant="bodyMd" as="p">
+                    {enabled && hasPlan
+                      ? "Keyboard shortcuts are currently disabled on your website." 
+                      : "Enable to disable keyboard shortcuts like Ctrl+C, Ctrl+U, F12 on your website."
+                    }
+                  </Text>
+                </SettingToggle>
+              </div>
 
               <Text as="p" variant="bodyMd">
               This feature helps you enhance security, reduce content copying, and limit access to developer tools.
               
               </Text>
               
-              {enabled && (
+              {enabled && hasPlan && (
                 <BlockStack gap="300">
                   <Text as="h3" variant="headingSm">
                     Shortcuts Disabled
@@ -327,19 +360,29 @@ export default function Shortcuts() {
                 <Text as="h2" variant="headingMd">
                   Theme Integration
                 </Text>
-                <Banner status="info">
-                  <BlockStack gap="300">
-                    <Text as="p" variant="bodyMd">
-                      Add the country blocker to your theme:
-                    </Text>
-                    <Button onClick={handleEmbedShortcutClick} primary>
-                      Open Theme Editor
-                    </Button>
-                    <Text as="p" variant="bodySm" color="subdued">
-                      This will open your theme editor where you can add the country blocker block to your store's sections.
-                    </Text>
-                  </BlockStack>
-                </Banner>
+                <div style={{ opacity: hasPlan ? 1 : 0.5 }}>
+                  <Banner status={hasPlan ? "info" : "warning"}>
+                    <BlockStack gap="300">
+                      <Text as="p" variant="bodyMd">
+                        {hasPlan 
+                          ? "Add the keyboard shortcuts blocker to your theme:" 
+                          : "You need to select a subscription plan to use this feature."}
+                      </Text>
+                      <Button 
+                        onClick={handleEmbedShortcutClick} 
+                        primary 
+                        disabled={!hasPlan}
+                      >
+                        Open Theme Editor
+                      </Button>
+                      {hasPlan && (
+                        <Text as="p" variant="bodySm" color="subdued">
+                          This will open your theme editor where you can add the keyboard shortcuts blocker to your store's sections.
+                        </Text>
+                      )}
+                    </BlockStack>
+                  </Banner>
+                </div>
               </BlockStack>
             </Card>
         </Layout.Section>
