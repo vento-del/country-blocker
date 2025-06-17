@@ -54,7 +54,6 @@ export default function App() {
         <Link to="/app/shortcuts">Disable Keyboard Shortcuts</Link>
         <Link to="/app/faq">FAQ</Link>
         <Link to="/app/privacy-policy">Privacy Policy</Link>
-        <Link to="/app/pricing">Manage Subscription</Link>
       </NavMenu>
       <Outlet />
     </AppProvider>
