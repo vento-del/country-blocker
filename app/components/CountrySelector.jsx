@@ -9,267 +9,405 @@ import {
   Select,
   Banner,
   Spinner,
+  Divider,
+  Box,
 } from "@shopify/polaris";
 import { useFetcher } from "@remix-run/react";
 
+// Define continents and their countries
+const continents = {
+  "Africa": [
+    "DZ", "AO", "BJ", "BW", "BF", "BI", "CM", "CV", "CF", "TD", "KM", "CG", "DJ", 
+    "EG", "GQ", "ER", "SZ", "ET", "GA", "GM", "GH", "GN", "GW", "CI", "KE", "LS", 
+    "LR", "LY", "MG", "MW", "ML", "MR", "MU", "MA", "MZ", "NA", "NE", "NG", "RW", 
+    "ST", "SN", "SC", "SL", "SO", "ZA", "SS", "SD", "TZ", "TG", "TN", "UG", "ZM", "ZW"
+  ],
+  "Asia": [
+    "AF", "AM", "AZ", "BH", "BD", "BT", "BN", "KH", "CN", "CY", "GE", "IN", "ID", 
+    "IR", "IQ", "IL", "JP", "JO", "KZ", "KW", "KG", "LA", "LB", "MY", "MV", "MN", 
+    "MM", "NP", "KP", "OM", "PK", "PS", "PH", "QA", "SA", "SG", "KR", "LK", "SY", 
+    "TW", "TJ", "TH", "TL", "TM", "AE", "UZ", "VN", "YE"
+  ],
+  "Europe": [
+    "AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CZ", "DK", "EE", "FI", "FR", 
+    "DE", "GR", "HU", "IS", "IE", "IT", "LV", "LI", "LT", "LU", "MT", "MD", "MC", 
+    "ME", "NL", "MK", "NO", "PL", "PT", "RO", "RU", "SM", "RS", "SK", "SI", "ES", 
+    "SE", "CH", "UA", "GB", "VA"
+  ],
+  "North America": [
+    "AG", "BS", "BB", "BZ", "CA", "CR", "CU", "DM", "DO", "SV", "GD", "GT", "HT", 
+    "HN", "JM", "MX", "NI", "PA", "KN", "LC", "VC", "TT", "US"
+  ],
+  "South America": [
+    "AR", "BO", "BR", "CL", "CO", "EC", "GY", "PY", "PE", "SR", "UY", "VE"
+  ],
+  "Oceania": [
+    "AU", "FJ", "KI", "MH", "FM", "NR", "NZ", "PW", "PG", "WS", "SB", "TO", "TV", "VU"
+  ]
+};
+
+// Create a flat list of countries with continent information
 const countries = [
-  { label: "Afghanistan", value: "AF" },
-  { label: "Albania", value: "AL" },
-  { label: "Algeria", value: "DZ" },
-  { label: "Andorra", value: "AD" },
-  { label: "Angola", value: "AO" },
-  { label: "Antigua and Barbuda", value: "AG" },
-  { label: "Argentina", value: "AR" },
-  { label: "Armenia", value: "AM" },
-  { label: "Australia", value: "AU" },
-  { label: "Austria", value: "AT" },
-  { label: "Azerbaijan", value: "AZ" },
-  { label: "Bahamas", value: "BS" },
-  { label: "Bahrain", value: "BH" },
-  { label: "Bangladesh", value: "BD" },
-  { label: "Barbados", value: "BB" },
-  { label: "Belarus", value: "BY" },
-  { label: "Belgium", value: "BE" },
-  { label: "Belize", value: "BZ" },
-  { label: "Benin", value: "BJ" },
-  { label: "Bhutan", value: "BT" },
-  { label: "Bolivia", value: "BO" },
-  { label: "Bosnia and Herzegovina", value: "BA" },
-  { label: "Botswana", value: "BW" },
-  { label: "Brazil", value: "BR" },
-  { label: "Brunei", value: "BN" },
-  { label: "Bulgaria", value: "BG" },
-  { label: "Burkina Faso", value: "BF" },
-  { label: "Burundi", value: "BI" },
-  { label: "Cambodia", value: "KH" },
-  { label: "Cameroon", value: "CM" },
-  { label: "Canada", value: "CA" },
-  { label: "Cape Verde", value: "CV" },
-  { label: "Central African Republic", value: "CF" },
-  { label: "Chad", value: "TD" },
-  { label: "Chile", value: "CL" },
-  { label: "China", value: "CN" },
-  { label: "Colombia", value: "CO" },
-  { label: "Comoros", value: "KM" },
-  { label: "Congo", value: "CG" },
-  { label: "Costa Rica", value: "CR" },
-  { label: "Croatia", value: "HR" },
-  { label: "Cuba", value: "CU" },
-  { label: "Cyprus", value: "CY" },
-  { label: "Czech Republic", value: "CZ" },
-  { label: "Denmark", value: "DK" },
-  { label: "Djibouti", value: "DJ" },
-  { label: "Dominica", value: "DM" },
-  { label: "Dominican Republic", value: "DO" },
-  { label: "Ecuador", value: "EC" },
-  { label: "Egypt", value: "EG" },
-  { label: "El Salvador", value: "SV" },
-  { label: "Equatorial Guinea", value: "GQ" },
-  { label: "Eritrea", value: "ER" },
-  { label: "Estonia", value: "EE" },
-  { label: "Eswatini", value: "SZ" },
-  { label: "Ethiopia", value: "ET" },
-  { label: "Fiji", value: "FJ" },
-  { label: "Finland", value: "FI" },
-  { label: "France", value: "FR" },
-  { label: "Gabon", value: "GA" },
-  { label: "Gambia", value: "GM" },
-  { label: "Georgia", value: "GE" },
-  { label: "Germany", value: "DE" },
-  { label: "Ghana", value: "GH" },
-  { label: "Greece", value: "GR" },
-  { label: "Grenada", value: "GD" },
-  { label: "Guatemala", value: "GT" },
-  { label: "Guinea", value: "GN" },
-  { label: "Guinea-Bissau", value: "GW" },
-  { label: "Guyana", value: "GY" },
-  { label: "Haiti", value: "HT" },
-  { label: "Honduras", value: "HN" },
-  { label: "Hungary", value: "HU" },
-  { label: "Iceland", value: "IS" },
-  { label: "India", value: "IN" },
-  { label: "Indonesia", value: "ID" },
-  { label: "Iran", value: "IR" },
-  { label: "Iraq", value: "IQ" },
-  { label: "Ireland", value: "IE" },
-  { label: "Israel", value: "IL" },
-  { label: "Italy", value: "IT" },
-  { label: "Jamaica", value: "JM" },
-  { label: "Japan", value: "JP" },
-  { label: "Jordan", value: "JO" },
-  { label: "Kazakhstan", value: "KZ" },
-  { label: "Kenya", value: "KE" },
-  { label: "Kiribati", value: "KI" },
-  { label: "Kuwait", value: "KW" },
-  { label: "Kyrgyzstan", value: "KG" },
-  { label: "Laos", value: "LA" },
-  { label: "Latvia", value: "LV" },
-  { label: "Lebanon", value: "LB" },
-  { label: "Lesotho", value: "LS" },
-  { label: "Liberia", value: "LR" },
-  { label: "Libya", value: "LY" },
-  { label: "Liechtenstein", value: "LI" },
-  { label: "Lithuania", value: "LT" },
-  { label: "Luxembourg", value: "LU" },
-  { label: "Madagascar", value: "MG" },
-  { label: "Malawi", value: "MW" },
-  { label: "Malaysia", value: "MY" },
-  { label: "Maldives", value: "MV" },
-  { label: "Mali", value: "ML" },
-  { label: "Malta", value: "MT" },
-  { label: "Marshall Islands", value: "MH" },
-  { label: "Mauritania", value: "MR" },
-  { label: "Mauritius", value: "MU" },
-  { label: "Mexico", value: "MX" },
-  { label: "Micronesia", value: "FM" },
-  { label: "Moldova", value: "MD" },
-  { label: "Monaco", value: "MC" },
-  { label: "Mongolia", value: "MN" },
-  { label: "Montenegro", value: "ME" },
-  { label: "Morocco", value: "MA" },
-  { label: "Mozambique", value: "MZ" },
-  { label: "Myanmar", value: "MM" },
-  { label: "Namibia", value: "NA" },
-  { label: "Nauru", value: "NR" },
-  { label: "Nepal", value: "NP" },
-  { label: "Netherlands", value: "NL" },
-  { label: "New Zealand", value: "NZ" },
-  { label: "Nicaragua", value: "NI" },
-  { label: "Niger", value: "NE" },
-  { label: "Nigeria", value: "NG" },
-  { label: "North Korea", value: "KP" },
-  { label: "North Macedonia", value: "MK" },
-  { label: "Norway", value: "NO" },
-  { label: "Oman", value: "OM" },
-  { label: "Pakistan", value: "PK" },
-  { label: "Palau", value: "PW" },
-  { label: "Palestine", value: "PS" },
-  { label: "Panama", value: "PA" },
-  { label: "Papua New Guinea", value: "PG" },
-  { label: "Paraguay", value: "PY" },
-  { label: "Peru", value: "PE" },
-  { label: "Philippines", value: "PH" },
-  { label: "Poland", value: "PL" },
-  { label: "Portugal", value: "PT" },
-  { label: "Qatar", value: "QA" },
-  { label: "Romania", value: "RO" },
-  { label: "Russia", value: "RU" },
-  { label: "Rwanda", value: "RW" },
-  { label: "Saint Kitts and Nevis", value: "KN" },
-  { label: "Saint Lucia", value: "LC" },
-  { label: "Saint Vincent and the Grenadines", value: "VC" },
-  { label: "Samoa", value: "WS" },
-  { label: "San Marino", value: "SM" },
-  { label: "Sao Tome and Principe", value: "ST" },
-  { label: "Saudi Arabia", value: "SA" },
-  { label: "Senegal", value: "SN" },
-  { label: "Serbia", value: "RS" },
-  { label: "Seychelles", value: "SC" },
-  { label: "Sierra Leone", value: "SL" },
-  { label: "Singapore", value: "SG" },
-  { label: "Slovakia", value: "SK" },
-  { label: "Slovenia", value: "SI" },
-  { label: "Solomon Islands", value: "SB" },
-  { label: "Somalia", value: "SO" },
-  { label: "South Africa", value: "ZA" },
-  { label: "South Korea", value: "KR" },
-  { label: "South Sudan", value: "SS" },
-  { label: "Spain", value: "ES" },
-  { label: "Sri Lanka", value: "LK" },
-  { label: "Sudan", value: "SD" },
-  { label: "Suriname", value: "SR" },
-  { label: "Sweden", value: "SE" },
-  { label: "Switzerland", value: "CH" },
-  { label: "Syria", value: "SY" },
-  { label: "Taiwan", value: "TW" },
-  { label: "Tajikistan", value: "TJ" },
-  { label: "Tanzania", value: "TZ" },
-  { label: "Thailand", value: "TH" },
-  { label: "Timor-Leste", value: "TL" },
-  { label: "Togo", value: "TG" },
-  { label: "Tonga", value: "TO" },
-  { label: "Trinidad and Tobago", value: "TT" },
-  { label: "Tunisia", value: "TN" },
-  { label: "Turkey", value: "TR" },
-  { label: "Turkmenistan", value: "TM" },
-  { label: "Tuvalu", value: "TV" },
-  { label: "Uganda", value: "UG" },
-  { label: "Ukraine", value: "UA" },
-  { label: "United Arab Emirates", value: "AE" },
-  { label: "United Kingdom", value: "GB" },
-  { label: "United States", value: "US" },
-  { label: "Uruguay", value: "UY" },
-  { label: "Uzbekistan", value: "UZ" },
-  { label: "Vanuatu", value: "VU" },
-  { label: "Vatican City", value: "VA" },
-  { label: "Venezuela", value: "VE" },
-  { label: "Vietnam", value: "VN" },
-  { label: "Yemen", value: "YE" },
-  { label: "Zambia", value: "ZM" },
-  { label: "Zimbabwe", value: "ZW" }
+  // Special options for selecting all countries or all countries in a continent
+  { label: "Select All Countries", value: "ALL_COUNTRIES", group: "Special" },
+  { label: "─────────────────", value: "", group: "Special", disabled: true },
+  { label: "All Africa", value: "ALL_AFRICA", group: "Special" },
+  { label: "All Asia", value: "ALL_ASIA", group: "Special" },
+  { label: "All Europe", value: "ALL_EUROPE", group: "Special" },
+  { label: "All North America", value: "ALL_NORTH_AMERICA", group: "Special" },
+  { label: "All South America", value: "ALL_SOUTH_AMERICA", group: "Special" },
+  { label: "All Oceania", value: "ALL_OCEANIA", group: "Special" },
+  { label: "─────────────────", value: "", group: "Special", disabled: true },
+  
+  // Africa
+  { label: "Algeria", value: "DZ", group: "Africa" },
+  { label: "Angola", value: "AO", group: "Africa" },
+  { label: "Benin", value: "BJ", group: "Africa" },
+  { label: "Botswana", value: "BW", group: "Africa" },
+  { label: "Burkina Faso", value: "BF", group: "Africa" },
+  { label: "Burundi", value: "BI", group: "Africa" },
+  { label: "Cameroon", value: "CM", group: "Africa" },
+  { label: "Cape Verde", value: "CV", group: "Africa" },
+  { label: "Central African Republic", value: "CF", group: "Africa" },
+  { label: "Chad", value: "TD", group: "Africa" },
+  { label: "Comoros", value: "KM", group: "Africa" },
+  { label: "Congo", value: "CG", group: "Africa" },
+  { label: "Djibouti", value: "DJ", group: "Africa" },
+  { label: "Egypt", value: "EG", group: "Africa" },
+  { label: "Equatorial Guinea", value: "GQ", group: "Africa" },
+  { label: "Eritrea", value: "ER", group: "Africa" },
+  { label: "Eswatini", value: "SZ", group: "Africa" },
+  { label: "Ethiopia", value: "ET", group: "Africa" },
+  { label: "Gabon", value: "GA", group: "Africa" },
+  { label: "Gambia", value: "GM", group: "Africa" },
+  { label: "Ghana", value: "GH", group: "Africa" },
+  { label: "Guinea", value: "GN", group: "Africa" },
+  { label: "Guinea-Bissau", value: "GW", group: "Africa" },
+  { label: "Ivory Coast", value: "CI", group: "Africa" },
+  { label: "Kenya", value: "KE", group: "Africa" },
+  { label: "Lesotho", value: "LS", group: "Africa" },
+  { label: "Liberia", value: "LR", group: "Africa" },
+  { label: "Libya", value: "LY", group: "Africa" },
+  { label: "Madagascar", value: "MG", group: "Africa" },
+  { label: "Malawi", value: "MW", group: "Africa" },
+  { label: "Mali", value: "ML", group: "Africa" },
+  { label: "Mauritania", value: "MR", group: "Africa" },
+  { label: "Mauritius", value: "MU", group: "Africa" },
+  { label: "Morocco", value: "MA", group: "Africa" },
+  { label: "Mozambique", value: "MZ", group: "Africa" },
+  { label: "Namibia", value: "NA", group: "Africa" },
+  { label: "Niger", value: "NE", group: "Africa" },
+  { label: "Nigeria", value: "NG", group: "Africa" },
+  { label: "Rwanda", value: "RW", group: "Africa" },
+  { label: "Sao Tome and Principe", value: "ST", group: "Africa" },
+  { label: "Senegal", value: "SN", group: "Africa" },
+  { label: "Seychelles", value: "SC", group: "Africa" },
+  { label: "Sierra Leone", value: "SL", group: "Africa" },
+  { label: "Somalia", value: "SO", group: "Africa" },
+  { label: "South Africa", value: "ZA", group: "Africa" },
+  { label: "South Sudan", value: "SS", group: "Africa" },
+  { label: "Sudan", value: "SD", group: "Africa" },
+  { label: "Tanzania", value: "TZ", group: "Africa" },
+  { label: "Togo", value: "TG", group: "Africa" },
+  { label: "Tunisia", value: "TN", group: "Africa" },
+  { label: "Uganda", value: "UG", group: "Africa" },
+  { label: "Zambia", value: "ZM", group: "Africa" },
+  { label: "Zimbabwe", value: "ZW", group: "Africa" },
+  
+  // Asia
+  { label: "Afghanistan", value: "AF", group: "Asia" },
+  { label: "Armenia", value: "AM", group: "Asia" },
+  { label: "Azerbaijan", value: "AZ", group: "Asia" },
+  { label: "Bahrain", value: "BH", group: "Asia" },
+  { label: "Bangladesh", value: "BD", group: "Asia" },
+  { label: "Bhutan", value: "BT", group: "Asia" },
+  { label: "Brunei", value: "BN", group: "Asia" },
+  { label: "Cambodia", value: "KH", group: "Asia" },
+  { label: "China", value: "CN", group: "Asia" },
+  { label: "Cyprus", value: "CY", group: "Asia" },
+  { label: "Georgia", value: "GE", group: "Asia" },
+  { label: "India", value: "IN", group: "Asia" },
+  { label: "Indonesia", value: "ID", group: "Asia" },
+  { label: "Iran", value: "IR", group: "Asia" },
+  { label: "Iraq", value: "IQ", group: "Asia" },
+  { label: "Israel", value: "IL", group: "Asia" },
+  { label: "Japan", value: "JP", group: "Asia" },
+  { label: "Jordan", value: "JO", group: "Asia" },
+  { label: "Kazakhstan", value: "KZ", group: "Asia" },
+  { label: "Kuwait", value: "KW", group: "Asia" },
+  { label: "Kyrgyzstan", value: "KG", group: "Asia" },
+  { label: "Laos", value: "LA", group: "Asia" },
+  { label: "Lebanon", value: "LB", group: "Asia" },
+  { label: "Malaysia", value: "MY", group: "Asia" },
+  { label: "Maldives", value: "MV", group: "Asia" },
+  { label: "Mongolia", value: "MN", group: "Asia" },
+  { label: "Myanmar", value: "MM", group: "Asia" },
+  { label: "Nepal", value: "NP", group: "Asia" },
+  { label: "North Korea", value: "KP", group: "Asia" },
+  { label: "Oman", value: "OM", group: "Asia" },
+  { label: "Pakistan", value: "PK", group: "Asia" },
+  { label: "Palestine", value: "PS", group: "Asia" },
+  { label: "Philippines", value: "PH", group: "Asia" },
+  { label: "Qatar", value: "QA", group: "Asia" },
+  { label: "Saudi Arabia", value: "SA", group: "Asia" },
+  { label: "Singapore", value: "SG", group: "Asia" },
+  { label: "South Korea", value: "KR", group: "Asia" },
+  { label: "Sri Lanka", value: "LK", group: "Asia" },
+  { label: "Syria", value: "SY", group: "Asia" },
+  { label: "Taiwan", value: "TW", group: "Asia" },
+  { label: "Tajikistan", value: "TJ", group: "Asia" },
+  { label: "Thailand", value: "TH", group: "Asia" },
+  { label: "Timor-Leste", value: "TL", group: "Asia" },
+  { label: "Turkmenistan", value: "TM", group: "Asia" },
+  { label: "United Arab Emirates", value: "AE", group: "Asia" },
+  { label: "Uzbekistan", value: "UZ", group: "Asia" },
+  { label: "Vietnam", value: "VN", group: "Asia" },
+  { label: "Yemen", value: "YE", group: "Asia" },
+  
+  // Europe
+  { label: "Albania", value: "AL", group: "Europe" },
+  { label: "Andorra", value: "AD", group: "Europe" },
+  { label: "Austria", value: "AT", group: "Europe" },
+  { label: "Belarus", value: "BY", group: "Europe" },
+  { label: "Belgium", value: "BE", group: "Europe" },
+  { label: "Bosnia and Herzegovina", value: "BA", group: "Europe" },
+  { label: "Bulgaria", value: "BG", group: "Europe" },
+  { label: "Croatia", value: "HR", group: "Europe" },
+  { label: "Czech Republic", value: "CZ", group: "Europe" },
+  { label: "Denmark", value: "DK", group: "Europe" },
+  { label: "Estonia", value: "EE", group: "Europe" },
+  { label: "Finland", value: "FI", group: "Europe" },
+  { label: "France", value: "FR", group: "Europe" },
+  { label: "Germany", value: "DE", group: "Europe" },
+  { label: "Greece", value: "GR", group: "Europe" },
+  { label: "Hungary", value: "HU", group: "Europe" },
+  { label: "Iceland", value: "IS", group: "Europe" },
+  { label: "Ireland", value: "IE", group: "Europe" },
+  { label: "Italy", value: "IT", group: "Europe" },
+  { label: "Latvia", value: "LV", group: "Europe" },
+  { label: "Liechtenstein", value: "LI", group: "Europe" },
+  { label: "Lithuania", value: "LT", group: "Europe" },
+  { label: "Luxembourg", value: "LU", group: "Europe" },
+  { label: "Malta", value: "MT", group: "Europe" },
+  { label: "Moldova", value: "MD", group: "Europe" },
+  { label: "Monaco", value: "MC", group: "Europe" },
+  { label: "Montenegro", value: "ME", group: "Europe" },
+  { label: "Netherlands", value: "NL", group: "Europe" },
+  { label: "North Macedonia", value: "MK", group: "Europe" },
+  { label: "Norway", value: "NO", group: "Europe" },
+  { label: "Poland", value: "PL", group: "Europe" },
+  { label: "Portugal", value: "PT", group: "Europe" },
+  { label: "Romania", value: "RO", group: "Europe" },
+  { label: "Russia", value: "RU", group: "Europe" },
+  { label: "San Marino", value: "SM", group: "Europe" },
+  { label: "Serbia", value: "RS", group: "Europe" },
+  { label: "Slovakia", value: "SK", group: "Europe" },
+  { label: "Slovenia", value: "SI", group: "Europe" },
+  { label: "Spain", value: "ES", group: "Europe" },
+  { label: "Sweden", value: "SE", group: "Europe" },
+  { label: "Switzerland", value: "CH", group: "Europe" },
+  { label: "Ukraine", value: "UA", group: "Europe" },
+  { label: "United Kingdom", value: "GB", group: "Europe" },
+  { label: "Vatican City", value: "VA", group: "Europe" },
+  
+  // North America
+  { label: "Antigua and Barbuda", value: "AG", group: "North America" },
+  { label: "Bahamas", value: "BS", group: "North America" },
+  { label: "Barbados", value: "BB", group: "North America" },
+  { label: "Belize", value: "BZ", group: "North America" },
+  { label: "Canada", value: "CA", group: "North America" },
+  { label: "Costa Rica", value: "CR", group: "North America" },
+  { label: "Cuba", value: "CU", group: "North America" },
+  { label: "Dominica", value: "DM", group: "North America" },
+  { label: "Dominican Republic", value: "DO", group: "North America" },
+  { label: "El Salvador", value: "SV", group: "North America" },
+  { label: "Grenada", value: "GD", group: "North America" },
+  { label: "Guatemala", value: "GT", group: "North America" },
+  { label: "Haiti", value: "HT", group: "North America" },
+  { label: "Honduras", value: "HN", group: "North America" },
+  { label: "Jamaica", value: "JM", group: "North America" },
+  { label: "Mexico", value: "MX", group: "North America" },
+  { label: "Nicaragua", value: "NI", group: "North America" },
+  { label: "Panama", value: "PA", group: "North America" },
+  { label: "Saint Kitts and Nevis", value: "KN", group: "North America" },
+  { label: "Saint Lucia", value: "LC", group: "North America" },
+  { label: "Saint Vincent and the Grenadines", value: "VC", group: "North America" },
+  { label: "Trinidad and Tobago", value: "TT", group: "North America" },
+  { label: "United States", value: "US", group: "North America" },
+  
+  // South America
+  { label: "Argentina", value: "AR", group: "South America" },
+  { label: "Bolivia", value: "BO", group: "South America" },
+  { label: "Brazil", value: "BR", group: "South America" },
+  { label: "Chile", value: "CL", group: "South America" },
+  { label: "Colombia", value: "CO", group: "South America" },
+  { label: "Ecuador", value: "EC", group: "South America" },
+  { label: "Guyana", value: "GY", group: "South America" },
+  { label: "Paraguay", value: "PY", group: "South America" },
+  { label: "Peru", value: "PE", group: "South America" },
+  { label: "Suriname", value: "SR", group: "South America" },
+  { label: "Uruguay", value: "UY", group: "South America" },
+  { label: "Venezuela", value: "VE", group: "South America" },
+  
+  // Oceania
+  { label: "Australia", value: "AU", group: "Oceania" },
+  { label: "Fiji", value: "FJ", group: "Oceania" },
+  { label: "Kiribati", value: "KI", group: "Oceania" },
+  { label: "Marshall Islands", value: "MH", group: "Oceania" },
+  { label: "Micronesia", value: "FM", group: "Oceania" },
+  { label: "Nauru", value: "NR", group: "Oceania" },
+  { label: "New Zealand", value: "NZ", group: "Oceania" },
+  { label: "Palau", value: "PW", group: "Oceania" },
+  { label: "Papua New Guinea", value: "PG", group: "Oceania" },
+  { label: "Samoa", value: "WS", group: "Oceania" },
+  { label: "Solomon Islands", value: "SB", group: "Oceania" },
+  { label: "Tonga", value: "TO", group: "Oceania" },
+  { label: "Tuvalu", value: "TV", group: "Oceania" },
+  { label: "Vanuatu", value: "VU", group: "Oceania" }
 ];
 
-export default function CountrySelector({ disabled, selectedCountries: initialSelectedCountries, onChange }) {
+export default function CountrySelector({ 
+  disabled, 
+  selectedCountries: initialSelectedCountries, 
+  onChange,
+  countryLimit,
+  limitReached,
+  planType = "none" // Add planType prop with default value
+}) {
   const [selectedCountries, setSelectedCountries] = useState(initialSelectedCountries || []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedValue, setSelectedValue] = useState("");
+  const [showAllCountries, setShowAllCountries] = useState(false);
   const fetcher = useFetcher();
 
+  // Check if user is on free plan
+  const isFreePlan = planType === "free";
+  const isPremiumPlan = planType === "premium";
+  const hasPlan = isFreePlan || isPremiumPlan;
+
   useEffect(() => {
-    // If initialSelectedCountries is provided, use it
-    if (initialSelectedCountries) {
+    // Always load saved countries from metafield when component mounts
+    fetcher.load("/api/metafields");
+  }, []);
+
+  // Handle initial countries from props
+  useEffect(() => {
+    if (initialSelectedCountries && initialSelectedCountries.length > 0) {
       setSelectedCountries(initialSelectedCountries);
       setLoading(false);
-    } else {
-      // Otherwise load saved countries when component mounts
-      fetcher.load("/api/metafields");
     }
   }, [initialSelectedCountries]);
 
+  // Handle countries loaded from metafield
   useEffect(() => {
     if (fetcher.data) {
-      console.log("Fetcher data received:", fetcher.data);
       if (fetcher.data.error) {
         setError(fetcher.data.error);
-        console.error("Error from API:", fetcher.data.error);
+        setLoading(false);
       } else if (fetcher.data.allowedCountries) {
-        setSelectedCountries(fetcher.data.allowedCountries);
-        if (onChange) {
-          onChange(fetcher.data.allowedCountries);
+        // Only use metafield data if we don't have initialSelectedCountries
+        if (!initialSelectedCountries || initialSelectedCountries.length === 0) {
+          console.log("Using countries from metafield:", fetcher.data.allowedCountries);
+          setSelectedCountries(fetcher.data.allowedCountries);
+          
+          // Notify parent component if needed
+          if (onChange) {
+            onChange(fetcher.data.allowedCountries);
+          }
         }
-        console.log("Countries loaded:", fetcher.data.allowedCountries);
+        setLoading(false);
       }
-      setLoading(false);
     }
-  }, [fetcher.data, onChange]);
+  }, [fetcher.data, onChange, initialSelectedCountries]);
 
   const handleCountryChange = (value) => {
-    if (disabled) return;
+    if (disabled || !hasPlan) return;
     
-    console.log("Country selected:", value);
     setSelectedValue(value);
-    if (value && !selectedCountries.includes(value)) {
-      const newSelection = [...selectedCountries, value];
-      setSelectedCountries(newSelection);
+    
+    // Handle special selections
+    let countriesToAdd = [];
+    
+    // Handle "Select All Countries" option
+    if (value === "ALL_COUNTRIES") {
+      // Get all country codes (excluding special options)
+      countriesToAdd = countries
+        .filter(country => !country.value.startsWith("ALL_") && country.value && !country.disabled)
+        .map(country => country.value);
+      console.log("Adding all countries:", countriesToAdd.length);
+    }
+    // Handle continent selections
+    else if (value.startsWith("ALL_")) {
+      // Convert ALL_NORTH_AMERICA to "North America"
+      let continentName = value.replace("ALL_", "");
       
-      // Call onChange if provided
-      if (onChange) {
-        onChange(newSelection);
+      // Handle special cases for continent names
+      if (continentName === "AFRICA") continentName = "Africa";
+      else if (continentName === "ASIA") continentName = "Asia";
+      else if (continentName === "EUROPE") continentName = "Europe";
+      else if (continentName === "NORTH_AMERICA") continentName = "North America";
+      else if (continentName === "SOUTH_AMERICA") continentName = "South America";
+      else if (continentName === "OCEANIA") continentName = "Oceania";
+      
+      // Get all countries for the selected continent
+      if (continents[continentName]) {
+        countriesToAdd = continents[continentName];
+        console.log(`Adding all countries from ${continentName}:`, countriesToAdd);
+      } else {
+        console.log(`Continent not found: ${continentName}`);
+      }
+    }
+    // Handle individual country selection
+    else if (value && !selectedCountries.includes(value)) {
+      countriesToAdd = [value];
+    }
+    
+    // If no countries to add, just reset the selection
+    if (countriesToAdd.length === 0) {
+      setSelectedValue("");
+      return;
+    }
+    
+    // Filter out countries that are already selected
+    countriesToAdd = countriesToAdd.filter(code => !selectedCountries.includes(code));
+    
+    // Check if adding these countries would exceed the limit
+    if (countryLimit) {
+      // If already at or over limit, show message and return
+      if (selectedCountries.length >= countryLimit) {
+        setSelectedValue("");
+        return;
       }
       
-      // Save to metafield
-      const formData = new FormData();
-      formData.append("countries", JSON.stringify(newSelection));
-      fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
+      // If adding all would exceed limit, only add up to the limit
+      if (selectedCountries.length + countriesToAdd.length > countryLimit) {
+        const remainingSlots = countryLimit - selectedCountries.length;
+        countriesToAdd = countriesToAdd.slice(0, remainingSlots);
+      }
     }
+    
+    // Add the new countries to the selection
+    const newSelection = [...selectedCountries, ...countriesToAdd];
+    console.log(`Adding ${countriesToAdd.length} countries to selection. New total: ${newSelection.length}`);
+    setSelectedCountries(newSelection);
+    
+    // Call onChange if provided
+    if (onChange) {
+      onChange(newSelection);
+    }
+    
+    // Save to metafield
+    const formData = new FormData();
+    formData.append("countries", JSON.stringify(newSelection));
+    fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
+    
     setSelectedValue("");
   };
 
   const removeCountry = (valueToRemove) => {
-    if (disabled) return;
+    if (disabled || !hasPlan) return;
     
-    console.log("Removing country:", valueToRemove);
     const newSelection = selectedCountries.filter(value => value !== valueToRemove);
     setSelectedCountries(newSelection);
     
@@ -285,9 +423,8 @@ export default function CountrySelector({ disabled, selectedCountries: initialSe
   };
 
   const handleClearAll = () => {
-    if (disabled) return;
+    if (disabled || !hasPlan) return;
     
-    console.log("Clearing all countries");
     setSelectedCountries([]);
     
     // Call onChange if provided
@@ -300,71 +437,184 @@ export default function CountrySelector({ disabled, selectedCountries: initialSe
     fetcher.submit(formData, { method: "POST", action: "/api/metafields" });
   };
 
-  if (loading) {
+  if (error) {
     return (
-      <Card>
-        <BlockStack gap="400" align="center">
-          <Spinner size="large" />
-          <Text as="p" variant="bodyMd">Loading country settings...</Text>
-        </BlockStack>
-      </Card>
+      <Banner status="critical">
+        <p>Error: {error}</p>
+      </Banner>
     );
   }
+  
+  // Group selected countries by continent
+  const countriesByContinent = {};
+  Object.keys(continents).forEach(continent => {
+    countriesByContinent[continent] = selectedCountries
+      .filter(code => continents[continent].includes(code))
+      .map(code => {
+        const country = countries.find(c => c.value === code);
+        return {
+          code,
+          label: country ? country.label : code
+        };
+      });
+  });
+  
+  // Determine if we need to show the "See More" button
+  const totalCountries = selectedCountries.length;
+  const shouldShowMore = totalCountries > 15;
 
+  // Show plan information banner
+  const renderPlanBanner = () => {
+    if (!hasPlan) {
+      return (
+        <Banner status="warning">
+          <Text as="p" variant="bodyMd">
+            You need to select a subscription plan to use country blocking.
+          </Text>
+        </Banner>
+      );
+    } else if (isFreePlan) {
+      return (
+        <Banner status="info">
+          <Text as="p" variant="bodyMd">
+            You are on the <strong>Free Plan</strong>. You can block up to 5 countries.
+          </Text>
+        </Banner>
+      );
+    } else if (isPremiumPlan) {
+      return (
+        <Banner status="success">
+          <Text as="p" variant="bodyMd">
+            You are on the <strong>Premium Plan</strong> with unlimited country blocking.
+          </Text>
+        </Banner>
+      );
+    }
+    return null;
+  };
+  
   return (
     <BlockStack gap="400">
-      {error && (
-        <Banner status="critical">
-          <p>Error: {error}</p>
-          {fetcher.data?.details && (
-            <p>Details: {JSON.stringify(fetcher.data.details)}</p>
-          )}
-        </Banner>
-      )}
-      
-      <Select
-        label="Select a country"
-        options={countries}
-        onChange={handleCountryChange}
-        value={selectedValue}
-        placeholder="Choose a country..."
-        helpText="Select one country at a time"
-        disabled={disabled}
-      />
-      
-      <InlineStack gap="300" wrap={false}>
-        <Button 
-          onClick={handleClearAll}
-          disabled={disabled}
-        >
-          Clear All
-        </Button>
-        {selectedCountries.length > 0 && (
-          <Text variant="bodySm" as="p" color="subdued">
-            {selectedCountries.length} {selectedCountries.length === 1 ? 'country' : 'countries'} selected
-          </Text>
-        )}
-      </InlineStack>
+      {loading ? (
+        <Spinner accessibilityLabel="Loading countries" size="large" />
+      ) : (
+        <>
+          {renderPlanBanner()}
+          
+          <div style={{ opacity: hasPlan ? 1 : 0.5 }}>
+            <Select
+              label="Select countries to block"
+              options={[
+                {
+                  label: "Quick Select",
+                  options: countries.filter(c => c.group === "Special")
+                },
+                {
+                  label: "Africa",
+                  options: countries.filter(c => c.group === "Africa")
+                },
+                {
+                  label: "Asia",
+                  options: countries.filter(c => c.group === "Asia")
+                },
+                {
+                  label: "Europe",
+                  options: countries.filter(c => c.group === "Europe")
+                },
+                {
+                  label: "North America",
+                  options: countries.filter(c => c.group === "North America")
+                },
+                {
+                  label: "South America",
+                  options: countries.filter(c => c.group === "South America")
+                },
+                {
+                  label: "Oceania",
+                  options: countries.filter(c => c.group === "Oceania")
+                }
+              ]}
+              onChange={handleCountryChange}
+              value={selectedValue}
+              placeholder={limitReached ? "Country limit reached" : "Choose countries..."}
+              disabled={disabled || limitReached || !hasPlan}
+            />
+            
+            <InlineStack gap="300" align="space-between">
+              <Button 
+                onClick={handleClearAll}
+                disabled={disabled || selectedCountries.length === 0 || !hasPlan}
+                size="slim"
+              >
+                Clear All
+              </Button>
+              
+              {countryLimit && (
+                <Text variant="bodySm" as="p" color="subdued">
+                  {selectedCountries.length}/{countryLimit} countries selected
+                </Text>
+              )}
+            </InlineStack>
+          </div>
 
-      {selectedCountries.length > 0 && (
-        <BlockStack gap="300">
-          <Text variant="headingSm" as="h3">Selected Countries:</Text>
-          <InlineStack gap="300" wrap>
-            {selectedCountries.map((value) => {
-              const country = countries.find(c => c.value === value);
-              return (
-                <Tag 
-                  key={value} 
-                  onRemove={disabled ? undefined : () => removeCountry(value)}
-                  disabled={disabled}
-                >
-                  {country?.label}
-                </Tag>
-              );
-            })}
-          </InlineStack>
-        </BlockStack>
+          {selectedCountries.length > 0 && (
+            <Card padding="400">
+              <BlockStack gap="400">
+                <Text variant="headingMd" as="h2">Blocked Countries</Text>
+                
+                {/* Display countries by continent */}
+                {Object.keys(countriesByContinent).map(continent => {
+                  const continentCountries = countriesByContinent[continent];
+                  if (continentCountries.length === 0) return null;
+                  
+                  // If we're not showing all countries, limit each continent to 5 countries
+                  const displayedCountries = showAllCountries 
+                    ? continentCountries 
+                    : continentCountries.slice(0, 5);
+                  
+                  return (
+                    <BlockStack key={continent} gap="300">
+                      <Box paddingBlockStart="200">
+                        <Text variant="headingSm" as="h3" fontWeight="semibold">
+                          {continent} ({continentCountries.length})
+                        </Text>
+                      </Box>
+                      <InlineStack gap="200" wrap>
+                        {displayedCountries.map(country => (
+                          <Tag 
+                            key={country.code} 
+                            onRemove={disabled || !hasPlan ? undefined : () => removeCountry(country.code)}
+                            disabled={disabled || !hasPlan}
+                          >
+                            {country.label}
+                          </Tag>
+                        ))}
+                        {!showAllCountries && continentCountries.length > 5 && (
+                          <Text variant="bodySm" as="span" color="subdued">
+                            +{continentCountries.length - 5} more
+                          </Text>
+                        )}
+                      </InlineStack>
+                      {continent !== "Oceania" && <Divider />}
+                    </BlockStack>
+                  );
+                })}
+                
+                {/* Show "See All" button if needed */}
+                {shouldShowMore && (
+                  <Button 
+                    onClick={() => setShowAllCountries(!showAllCountries)} 
+                    plain
+                    size="slim"
+                  >
+                    {showAllCountries ? "Show Less" : "Show All Countries"}
+                  </Button>
+                )}
+              </BlockStack>
+            </Card>
+          )}
+        </>
       )}
     </BlockStack>
   );
-} 
+}
