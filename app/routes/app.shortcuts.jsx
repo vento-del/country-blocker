@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData, useSubmit } from "@remix-run/react";
+import { useLoaderData, useSubmit, useActionData, useNavigation } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -238,14 +238,44 @@ export const action = async ({ request }) => {
 export default function Shortcuts() {
   const { isEnabled, error, shopDomain, hasPlan, planType } = useLoaderData();
   const [enabled, setEnabled] = useState(isEnabled);
-  const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState({ success: false, error: null });
   
   const submit = useSubmit();
+  const actionData = useActionData();
+  const navigation = useNavigation();
+  
+  // Check if we're currently submitting
+  const isSaving = navigation.state === "submitting";
   
   // Check if user is on premium plan (only premium plan can use keyboard shortcuts)
   const isPremiumPlan = planType === "premium";
   const isFreePlan = planType === "free";
+  
+  // Sync enabled state with loader data
+  useEffect(() => {
+    setEnabled(isEnabled);
+  }, [isEnabled]);
+  
+  // Handle action response
+  useEffect(() => {
+    if (actionData && navigation.state === "idle") {
+      if (actionData.success) {
+        setSaveStatus({ success: true, error: null });
+      } else if (actionData.error) {
+        setSaveStatus({ success: false, error: actionData.error });
+      }
+    }
+  }, [actionData, navigation.state]);
+  
+  // Clear save status after a few seconds
+  useEffect(() => {
+    if (saveStatus.success || saveStatus.error) {
+      const timer = setTimeout(() => {
+        setSaveStatus({ success: false, error: null });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveStatus]);
   
   const handleToggle = useCallback(() => {
     // Only allow premium plan users to toggle this feature
@@ -257,7 +287,7 @@ export default function Shortcuts() {
       return;
     }
     
-    setIsSaving(true);
+    // Clear any previous save status
     setSaveStatus({ success: false, error: null });
     
     const newEnabledState = !enabled;
@@ -265,16 +295,7 @@ export default function Shortcuts() {
     const formData = new FormData();
     formData.append("enabled", newEnabledState.toString());
     
-    submit(formData, { method: "post" })
-      .then(() => {
-        setEnabled(newEnabledState);
-        setSaveStatus({ success: true, error: null });
-        setIsSaving(false);
-      })
-      .catch(error => {
-        setSaveStatus({ success: false, error: error.message });
-        setIsSaving(false);
-      });
+    submit(formData, { method: "post" });
   }, [enabled, isPremiumPlan, submit]);
   
   const handleEmbedShortcutClick = useCallback(() => {
@@ -380,6 +401,22 @@ export default function Shortcuts() {
                   <Banner status="success">
                     <Text as="p" variant="bodyMd">
                       You are on the <strong>Premium</strong> plan with full access to all features.
+                    </Text>
+                  </Banner>
+                )}
+                
+                {saveStatus.success && (
+                  <Banner status="success">
+                    <Text as="p" variant="bodyMd">
+                      Settings saved successfully!
+                    </Text>
+                  </Banner>
+                )}
+                
+                {saveStatus.error && (
+                  <Banner status="critical">
+                    <Text as="p" variant="bodyMd">
+                      {saveStatus.error}
                     </Text>
                   </Banner>
                 )}

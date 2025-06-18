@@ -3,7 +3,7 @@
 client_id = "a1ab97a46b1da2e22ae82de7c621e32a"
 name = "Rabbi Country Blocker"
 handle = "insta-18"
-application_url = "https://nobody-flashing-frederick-honduras.trycloudflare.com"
+application_url = "https://bags-palmer-monetary-wr.trycloudflare.com"
 embedded = true
 
 [build]
@@ -22,7 +22,7 @@ api_version = "2024-01"
 scopes = "read_products,write_products"
 
 [auth]
-redirect_urls = ["https://nobody-flashing-frederick-honduras.trycloudflare.com/auth/callback", "https://nobody-flashing-frederick-honduras.trycloudflare.com/auth/shopify/callback", "https://nobody-flashing-frederick-honduras.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://bags-palmer-monetary-wr.trycloudflare.com/auth/callback", "https://bags-palmer-monetary-wr.trycloudflare.com/auth/shopify/callback", "https://bags-palmer-monetary-wr.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

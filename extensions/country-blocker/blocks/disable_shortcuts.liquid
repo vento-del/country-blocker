@@ -1,64 +1,170 @@
-
-
-<div id="keyboard-shortcut" data-shortcuts='{{ shop.metafields.shortcuts.enabled }}'></div>
+<div id="keyboard-shortcut" data-shortcuts='{{ shop.metafields.keyboardshortcuts.disabled }}'></div>
 
 <script>
-  // Check if keyboard shortcuts should be disabled
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const shortcutElement = document.getElementById('keyboard-shortcut');
     const shortcutsEnabled = shortcutElement.getAttribute('data-shortcuts') === 'true';
-    
+
     if (shortcutsEnabled) {
       console.log('Keyboard shortcuts blocking is enabled');
-      
-      document.addEventListener('keydown', function (e) {
-        const key = e.key.toLowerCase();
-        
-        // Block Ctrl/Meta + [C, X, A, S, U, P, R]
-        if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 's', 'u', 'p', 'r'].includes(key)) {
-          e.preventDefault();
-          console.log(`Ctrl+${key.toUpperCase()} is disabled on this page.`);
+
+      // Inject CSS to disable user selection & long press only when shortcutsEnabled
+      const style = document.createElement('style');
+      style.textContent = `
+        * {
+          -webkit-user-select: none !important;
+          -moz-user-select: none !important;
+          -ms-user-select: none !important;
+          user-select: none !important;
+          -webkit-touch-callout: none !important;
+          -webkit-tap-highlight-color: transparent !important;
+          -webkit-appearance: none !important;
+          pointer-events: auto !important;
         }
         
-        // Block F12 and F5
-        if (e.key === 'F12' || e.key === 'F5') {
-          e.preventDefault();
-          console.log(`${e.key} is disabled on this page.`);
+        /* Additional mobile-specific styles */
+        body {
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+          -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
         }
         
-        // Block Ctrl+Shift+I / J
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j'].includes(key)) {
-          e.preventDefault();
-          console.log(`Ctrl+Shift+${key.toUpperCase()} is disabled on this page.`);
+        /* Safari-specific enhancements */
+        * {
+          -webkit-touch-callout: none !important;
+          -webkit-user-drag: none !important;
+          -khtml-user-drag: none !important;
+          -moz-user-drag: none !important;
+          -o-user-drag: none !important;
+          user-drag: none !important;
         }
         
-        // Block Shift+F10 (context menu)
-        if (e.shiftKey && e.key === 'F10') {
-          e.preventDefault();
-          console.log('Shift+F10 (context menu) is disabled.');
+        /* Prevent text selection on mobile */
+        *::selection {
+          background: transparent !important;
         }
-      });
-      
+        
+        *::-moz-selection {
+          background: transparent !important;
+        }
+      `;
+      document.head.appendChild(style);
+
       // Disable right-click
       document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
-        console.log('Right-click is disabled on this page.');
+        console.log('Right-click is disabled.');
       });
+
+      // Block keyboard shortcuts
+      document.addEventListener('keydown', function (e) {
+        const key = e.key.toLowerCase();
+
+        // Ctrl/Meta + C, X, A, S, U, P, R
+        if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 's', 'u', 'p', 'r'].includes(key)) {
+          e.preventDefault();
+          console.log(`Shortcut Ctrl+${key.toUpperCase()} is disabled.`);
+        }
+
+        // F12 or F5
+        if (['F12', 'F5'].includes(e.key)) {
+          e.preventDefault();
+          console.log(`${e.key} is disabled.`);
+        }
+
+        // Ctrl+Shift+I or J
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j'].includes(key)) {
+          e.preventDefault();
+          console.log(`Shortcut Ctrl+Shift+${key.toUpperCase()} is disabled.`);
+        }
+
+        // Shift + F10
+        if (e.shiftKey && e.key === 'F10') {
+          e.preventDefault();
+          console.log('Shift+F10 is disabled.');
+        }
+      });
+
+      // Block copy/cut/select (enhanced for mobile)
+      document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Copy attempt blocked');
+        return false;
+      }, true);
       
+      document.addEventListener('cut', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Cut attempt blocked');
+        return false;
+      }, true);
+      
+      document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }, true);
+
+      // Additional mobile copy prevention
+      document.addEventListener('beforecopy', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      document.addEventListener('beforecut', function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      // Safari-friendly mobile prevention - ONLY prevent zoom and long-press context menu
+      document.addEventListener('touchstart', function (e) {
+        // Only prevent multi-touch zoom gestures
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchmove', function (e) {
+        // Only prevent multi-touch zoom gestures  
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      // Prevent gesture events
+      document.addEventListener('gesturestart', e => e.preventDefault());
+      document.addEventListener('gesturechange', e => e.preventDefault());
+      document.addEventListener('gestureend', e => e.preventDefault());
+
+      // Prevent mobile-specific selection events
+      document.addEventListener('selectionchange', function(e) {
+        if (window.getSelection) {
+          window.getSelection().removeAllRanges();
+        }
+      });
+
+      // Safari-specific: Clear any selections that might occur
+      setInterval(function() {
+        if (window.getSelection && window.getSelection().toString()) {
+          window.getSelection().removeAllRanges();
+        }
+      }, 100);
+
+      // Prevent drag events on mobile
+      document.addEventListener('dragstart', e => e.preventDefault());
+      document.addEventListener('drop', e => e.preventDefault());
     } else {
       console.log('Keyboard shortcuts blocking is disabled');
     }
   });
 </script>
-   
+
 {% schema %}
-    {
-      "name": "Disable Shortcuts",
-      "target": "body",
-      "class": "Keyboard_shortcuts",
-    
-      "settings": [
-       
-      ]
-    }
-    {% endschema %}
+{
+  "name": "Disable Shortcuts",
+  "target": "body",
+  "class": "Keyboard_shortcuts",
+  "settings": []
+}
+{% endschema %}
