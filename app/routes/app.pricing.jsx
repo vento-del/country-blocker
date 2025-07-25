@@ -37,13 +37,28 @@ export const loader = async ({ request }) => {
     const responseJson = await response.json();
     const activeSubscriptions = responseJson.data?.currentAppInstallation?.activeSubscriptions || [];
     
+    // Debug: Log the actual subscription data
+    console.log('Raw subscription response:', JSON.stringify(responseJson, null, 2));
+    console.log('Active subscriptions:', activeSubscriptions);
+    
     // If there are any active subscriptions, determine the plan type
     if (activeSubscriptions.length > 0) {
+      // Log each subscription for debugging
+      activeSubscriptions.forEach((sub, index) => {
+        console.log(`Subscription ${index}:`, {
+          id: sub.id,
+          name: sub.name,
+          status: sub.status,
+          nameLowerCase: sub.name?.toLowerCase()
+        });
+      });
+      
       // Check for plan type based on name
       // Assuming plan names are "Forever Free" and "Forever 2.99"
       const premiumPlan = activeSubscriptions.find(sub => 
         sub.name?.toLowerCase().includes("forever 1") || 
         sub.name?.toLowerCase().includes("forever 2.99") ||
+        sub.name?.toLowerCase().includes("2.99") ||
         sub.name?.toLowerCase().includes("premium")
       );
       
@@ -52,13 +67,18 @@ export const loader = async ({ request }) => {
         sub.name?.toLowerCase().includes("free")
       );
       
+      console.log('Premium plan found:', premiumPlan);
+      console.log('Free plan found:', freePlan);
+      
       if (premiumPlan) {
         planType = "premium";
       } else if (freePlan) {
         planType = "free";
       }
       
-      console.log('Active subscription found:', planType);
+      console.log('Final plan type determined:', planType);
+    } else {
+      console.log('No active subscriptions found');
     }
   } catch (error) {
     console.error('Error checking subscription status:', error);

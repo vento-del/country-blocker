@@ -43,14 +43,30 @@ export const loader = async ({ request }) => {
     const responseJson = await response.json();
     const activeSubscriptions = responseJson.data?.currentAppInstallation?.activeSubscriptions || [];
     
+    // Debug: Log the actual subscription data
+    console.log('Main Index - Raw subscription response:', JSON.stringify(responseJson, null, 2));
+    console.log('Main Index - Active subscriptions:', activeSubscriptions);
+    
     // If there are any active subscriptions, determine the plan type
     if (activeSubscriptions.length > 0) {
       hasPlan = true;
       
+      // Log each subscription for debugging
+      activeSubscriptions.forEach((sub, index) => {
+        console.log(`Main Index - Subscription ${index}:`, {
+          id: sub.id,
+          name: sub.name,
+          status: sub.status,
+          nameLowerCase: sub.name?.toLowerCase()
+        });
+      });
+      
       // Check for plan type based on name
-      // Assuming plan names are "Forever Free" and "Forever 1"
+      // Assuming plan names are "Forever Free" and "Forever 2.99"
       const premiumPlan = activeSubscriptions.find(sub => 
         sub.name?.toLowerCase().includes("forever 1") || 
+        sub.name?.toLowerCase().includes("forever 2.99") ||
+        sub.name?.toLowerCase().includes("2.99") ||
         sub.name?.toLowerCase().includes("premium")
       );
       
@@ -59,16 +75,20 @@ export const loader = async ({ request }) => {
         sub.name?.toLowerCase().includes("free")
       );
       
+      console.log('Main Index - Premium plan found:', premiumPlan);
+      console.log('Main Index - Free plan found:', freePlan);
+      
       if (premiumPlan) {
         planType = "premium";
       } else if (freePlan) {
         planType = "free";
       }
       
-      console.log('Active subscription found:', planType);
+      console.log('Main Index - Final plan type determined:', planType);
+      console.log('Main Index - hasPlan:', hasPlan);
+    } else {
+      console.log('Main Index - No active subscriptions found');
     }
-    
-    console.log('Active subscriptions:', activeSubscriptions);
   } catch (error) {
     console.error('Error checking subscription status:', error);
     // Default to no plan if there's an error

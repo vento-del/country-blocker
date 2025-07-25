@@ -68,9 +68,11 @@ export const loader = async ({ request }) => {
       hasPlan = true;
       
       // Check for plan type based on name
-      // Assuming plan names are "Forever Free" and "Forever 1"
+      // Assuming plan names are "Forever Free" and "Forever 2.99"
       const premiumPlan = activeSubscriptions.find(sub => 
         sub.name?.toLowerCase().includes("forever 1") || 
+        sub.name?.toLowerCase().includes("forever 2.99") ||
+        sub.name?.toLowerCase().includes("2.99") ||
         sub.name?.toLowerCase().includes("premium")
       );
       
@@ -141,6 +143,8 @@ export const action = async ({ request }) => {
     // Check for premium plan
     const premiumPlan = activeSubscriptions.find(sub => 
       sub.name?.toLowerCase().includes("forever 1") || 
+      sub.name?.toLowerCase().includes("forever 2.99") ||
+      sub.name?.toLowerCase().includes("2.99") ||
       sub.name?.toLowerCase().includes("premium")
     );
     
