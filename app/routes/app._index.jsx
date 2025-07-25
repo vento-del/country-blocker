@@ -383,6 +383,22 @@ export default function Index() {
                 </div>
               </BlockStack>
             </Card>
+            <Card>
+              <BlockStack gap="300">
+                <Text as="h2" variant="headingMd">
+                  Bot Blocker
+                </Text>
+                <Text as="p" variant="bodyMd">
+                  Advanced multi-layered bot detection system that blocks search engine bots, crawlers, and headless browsers using behavioral analysis, honeypot traps, and user interaction monitoring.
+                </Text>
+                <Button 
+                  url="/app/botblocker"
+                  primary
+                >
+                  Configure Bot Blocker
+                </Button>
+              </BlockStack>
+            </Card>
           </Layout.Section>
           <Layout.Section secondary>
             <Card>
@@ -398,6 +414,7 @@ export default function Index() {
                     <li><Text as="span" variant="bodyMd">Unlimited country blocking</Text></li>
                     <li><Text as="span" variant="bodyMd">Keyboard shortcuts blocking</Text></li>
                     <li><Text as="span" variant="bodyMd">Right-click context menu blocking</Text></li>
+                    <li><Text as="span" variant="bodyMd">Advanced bot and crawler blocking with behavioral analysis</Text></li>
                     <li><Text as="span" variant="bodyMd">Developer tools access prevention</Text></li>
                     <li><Text as="span" variant="bodyMd">Priority support</Text></li>
                   </ul>
